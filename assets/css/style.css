@@ -149,6 +149,7 @@
 a.copy-btn{
   color: #ffffff;
   cursor: pointer;
+  text-decoration: none;
   margin: 0 10px;
 }
 .copy-btn:hover{

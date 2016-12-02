@@ -205,7 +205,7 @@ if(!class_exists('WP_DropIt')) {
 				<div class="shortlink-wrapper" style="background-color:<?php echo esc_attr($link_bg_color); ?>">
 					<fieldset>
 						<lable style="color:<?php echo esc_attr($link_title_color);?>"><?php echo esc_attr($link_title);?></lable>
-						<a class="copy-btn" data-clipboard-target="#shortlink" style="color:<?php echo esc_attr($link_title_color);?>"><?php _e( '(Copied to clipboard)', 'sendfiles' );?></a><span class="copy-msg" style="color:<?php echo $link_title_color;?>"></span>
+						<a class="copy-btn" data-clipboard-target="#shortlink" style="color:<?php echo esc_attr($link_title_color);?>"><?php _e( 'Copy Link', 'sendfiles' );?></a><span class="copy-msg" style="color:<?php echo $link_title_color;?>"></span>
 						<input id="shortlink" type="text" size="60" />
 					</fieldset>
 				</div>

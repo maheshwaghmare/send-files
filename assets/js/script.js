@@ -7,7 +7,7 @@
 		clipboard = new Clipboard('.copy-btn');
 
 		clipboard.on('success', function(e) {
-		    $(".copy-msg").fadeIn().text("link copied");
+		    $(".copy-msg").fadeIn().text("(Copied to clipboard)");
 		    e.clearSelection();
 		});
 
