@@ -9,17 +9,17 @@ Version: 0.0.1
 Text Domain: sendfiles
 */
 
-if(!defined('DROPIT_VERSION')) {
-	define( 'DROPIT_VERSION', '0.0.1' );
+if(!defined('SENDFILES_VERSION')) {
+	define( 'SENDFILES_VERSION', '0.0.1' );
 }
-if(!defined('DROPIT_PATH')) {
-	define( 'DROPIT_PATH', plugin_dir_path(__FILE__) );
+if(!defined('SENDFILES_PATH')) {
+	define( 'SENDFILES_PATH', plugin_dir_path(__FILE__) );
 }
 
-require_once(DROPIT_PATH.'dropbox/autoload.php');
-require_once(DROPIT_PATH.'classes/Dropbox.class.php');
-require_once(DROPIT_PATH.'classes/Database.class.php');
-include_once(DROPIT_PATH.'admin/dropit-cron.php');
+require_once(SENDFILES_PATH.'dropbox/autoload.php');
+require_once(SENDFILES_PATH.'classes/Dropbox.class.php');
+require_once(SENDFILES_PATH.'classes/Database.class.php');
+include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
 
 ini_set('max_execution_time', 300);
 
@@ -72,8 +72,8 @@ if(!class_exists('WP_DropIt')) {
 	    function dropit_admin_page() {
 
 
-	    	include_once DROPIT_PATH.'admin/dashboard.php';
-	    	include_once DROPIT_PATH.'admin/dashboard-options.php';
+	    	include_once SENDFILES_PATH.'admin/dashboard.php';
+	    	include_once SENDFILES_PATH.'admin/dashboard-options.php';
 
 	    }
 
@@ -106,12 +106,12 @@ if(!class_exists('WP_DropIt')) {
 		function dropit_assets() {
 
 			wp_enqueue_script( 'jquery' );
-			wp_register_script( 'dropit-js', plugin_dir_url( __FILE__ ).'assets/js/script.js', array('jquery'), DROPIT_VERSION );
+			wp_register_script( 'dropit-js', plugin_dir_url( __FILE__ ).'assets/js/script.js', array('jquery'), SENDFILES_VERSION );
 			wp_register_script( 'clipboard-js', plugin_dir_url( __FILE__ ).'assets/js/clipboard.min.js', array('jquery')  );
 			wp_enqueue_script( 'dropit-js' );
 			wp_enqueue_script( 'clipboard-js' );
 
-			wp_register_style( 'dropit-css', plugin_dir_url( __FILE__ ).'assets/css/style.css', null, DROPIT_VERSION );
+			wp_register_style( 'dropit-css', plugin_dir_url( __FILE__ ).'assets/css/style.css', null, SENDFILES_VERSION );
 			wp_enqueue_style( 'dropit-css' );
 
 		}
@@ -124,9 +124,9 @@ if(!class_exists('WP_DropIt')) {
 			wp_enqueue_script( 'jquery' );
 	        wp_enqueue_style( 'wp-color-picker' );
 	        wp_enqueue_style( 'wp-jquery-ui-dialog' );
-			wp_register_script( 'admin-dropit-js', plugin_dir_url( __FILE__ ).'assets/admin/js/admin-script.js', array('jquery','jquery-ui-dialog'), DROPIT_VERSION );
-			wp_enqueue_script( 'wp-color-picker-alpha', plugin_dir_url( __FILE__ ).'assets/admin/js/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), DROPIT_VERSION);
-			wp_register_style( 'admin-dropit-css', plugin_dir_url( __FILE__ ).'assets/admin/css/admin-style.css', null, DROPIT_VERSION );
+			wp_register_script( 'admin-dropit-js', plugin_dir_url( __FILE__ ).'assets/admin/js/admin-script.js', array('jquery','jquery-ui-dialog'), SENDFILES_VERSION );
+			wp_enqueue_script( 'wp-color-picker-alpha', plugin_dir_url( __FILE__ ).'assets/admin/js/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), SENDFILES_VERSION);
+			wp_register_style( 'admin-dropit-css', plugin_dir_url( __FILE__ ).'assets/admin/css/admin-style.css', null, SENDFILES_VERSION );
 
 			// Localize the script with new data
 			// $messages_array = array(

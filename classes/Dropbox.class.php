@@ -10,7 +10,7 @@ class Dropbox {
 
 	// get web auth
 	public function getWebAuth() {
-		$appInfo = dbx\AppInfo::loadFromJsonFile(DROPIT_PATH.'admin/app-info.json');
+		$appInfo = dbx\AppInfo::loadFromJsonFile(SENDFILES_PATH.'admin/app-info.json');
 	    $clientIdentifier = "SendFiles/1.0";
 	    $webAuth = new dbx\WebAuthNoRedirect($appInfo , $clientIdentifier, "en");
 	    return $webAuth;
