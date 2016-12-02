@@ -14,10 +14,10 @@ use Dropbox as dbx;
     */          
     
     function dropit_add_cron_intervals( $schedules ) {
-    	    if(isset($_POST['wp-dropit-basic'])) {
-		        $settings = (isset($_POST['dropit'])) ? $_POST['dropit'] : array();
-		         update_option( 'wp-dropit-basic', $settings );
-		    }
+            if(isset($_POST['wp-dropit-basic'])) {
+                $settings = (isset($_POST['dropit'])) ? $_POST['dropit'] : array();
+                 update_option( 'wp-dropit-basic', $settings );
+            }
             $settings = (get_option( 'wp-dropit-basic' )) ? get_option( 'wp-dropit-basic' ) : array();
             if (!isset($settings['expiry_type'])) {
                 $settings['expiry_type'] ='';
@@ -64,7 +64,10 @@ use Dropbox as dbx;
     */
     function dropit_cron_exec() {
 
-		$settings = (get_option( 'wp-dropit-basic' )) ? get_option( 'wp-dropit-basic' ) : array(); 
+        $settings = (get_option( 'wp-dropit-basic' )) ? get_option( 'wp-dropit-basic' ) : array(); 
+        if (!isset($settings['expiry_type'])) {
+                $settings['expiry_type'] ='';
+            }
         switch ($settings['expiry_type']) {
             case 'minutes':
                 $expiry = $settings['expiry_number']*60;
@@ -91,8 +94,10 @@ use Dropbox as dbx;
         $curtime = date("Y-m-d H:i:s");
         foreach ($files as $file) {
 
+
+            // get the total time difference between current time and file uploaded time
             if((strtotime($curtime) - strtotime($file->date)) > $expiry) {
-                $clientIdentifier = "DropIt/1.0";
+                $clientIdentifier = "SendFiles/1.0";
                 $dbxClient = new dbx\Client($results->access_token, $clientIdentifier);
                 try {
                     $dbxClient->delete($file->file);

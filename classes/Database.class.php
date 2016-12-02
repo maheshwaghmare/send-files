@@ -83,7 +83,6 @@ class DropitDatabase {
 							"id" => 1
 						) 
 					);	
-			return $result;
 		}
 		else{
 			$result = $wpdb->update(
@@ -103,6 +102,7 @@ class DropitDatabase {
 						)
 					); 
 		}
+		return $result;
                	
     }
 

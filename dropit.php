@@ -1,16 +1,16 @@
 <?php
 /*
-Plugin Name: WP Dropit
+Plugin Name: Send Files
 Plugin URI: https://www.brainstormforce.com
 Author: BrainStrom Force
 Author URI: https://www.brainstormforce.com
-Description: Upload large files on dropbox and get sharable URL.
-Version: 1.0.0
-Text Domain: dropit
+Description: Send Files is a simple plugin that connects with your Dropbox account. Once the plugin is installed and configured, you can create a beautiful page on your website where your users can upload files and share the link with you (or anyone else)
+Version: 0.0.1
+Text Domain: sendfiles
 */
 
 if(!defined('DROPIT_VERSION')) {
-	define( 'DROPIT_VERSION', '1.0.0' );
+	define( 'DROPIT_VERSION', '0.0.1' );
 }
 if(!defined('DROPIT_PATH')) {
 	define( 'DROPIT_PATH', plugin_dir_path(__FILE__) );
@@ -21,7 +21,8 @@ require_once(DROPIT_PATH.'classes/Dropbox.class.php');
 require_once(DROPIT_PATH.'classes/Database.class.php');
 include_once(DROPIT_PATH.'admin/dropit-cron.php');
 
-ini_set('max_execution_time', 300); //300 seconds = 5 minutes
+ini_set('max_execution_time', 300);
+
 use \Dropbox as dbx;
 
 if(!class_exists('WP_DropIt')) {
@@ -57,8 +58,8 @@ if(!class_exists('WP_DropIt')) {
 
 	        add_submenu_page(
 				'options-general.php',
-				__( 'DropIt', 'dropit' ),
-				__( 'DropIt', 'dropit' ),
+				__( 'DropIt', 'sendfiles' ),
+				__( 'DropIt', 'sendfiles' ),
 				'manage_options',
 				'wp-dropit',
 				array( $this, 'dropit_admin_page' )
@@ -123,16 +124,23 @@ if(!class_exists('WP_DropIt')) {
 			wp_enqueue_script( 'jquery' );
 	        wp_enqueue_style( 'wp-color-picker' );
 	        wp_enqueue_style( 'wp-jquery-ui-dialog' );
-			wp_register_script( 'admin-dropit-js', plugin_dir_url( __FILE__ ).'assets/admin/js/admin-script.js', array('wp-color-picker','jquery','jquery-ui-dialog'), DROPIT_VERSION );
+			wp_register_script( 'admin-dropit-js', plugin_dir_url( __FILE__ ).'assets/admin/js/admin-script.js', array('jquery','jquery-ui-dialog'), DROPIT_VERSION );
+			wp_enqueue_script( 'wp-color-picker-alpha', plugin_dir_url( __FILE__ ).'assets/admin/js/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), DROPIT_VERSION);
 			wp_register_style( 'admin-dropit-css', plugin_dir_url( __FILE__ ).'assets/admin/css/admin-style.css', null, DROPIT_VERSION );
+
+			// Localize the script with new data
+			// $messages_array = array(
+			// 	'some_string' => __( 'Some string to translate', 'plugin-domain' ),
+			// 	'a_value' => '10'
+			// );
+			// wp_localize_script( 'admin-dropit-js', 'admin_dropit', $translation_array );
+
+
 			wp_localize_script( 'admin-dropit-js', 'admin_dropit', array(
 				'admin_dropit_url' => admin_url( 'admin-ajax.php' )
 			));
 			wp_enqueue_script( 'admin-dropit-js' );
 			wp_enqueue_style( 'admin-dropit-css' );
-
-
-
 		}
 
 
@@ -154,10 +162,7 @@ if(!class_exists('WP_DropIt')) {
 				$file_text = $settings['file_text'];
 			}
 			else{
-				$file_text = __( ' Drop file here or click to upload.', 'dropit' );
-			}
-			if (isset($settings['file_icon_color'])) {
-				$file_icon_color = $settings['file_icon_color'];
+				$file_text = __( ' Drop file here or click to upload.', 'sendfiles' );
 			}
 			if (isset($settings['upload_font_color'])) {
 				$upload_font_color = $settings['upload_font_color'];	
@@ -168,43 +173,48 @@ if(!class_exists('WP_DropIt')) {
 			if (isset($settings['link_bg_color'])) {
 				$link_bg_color = $settings['link_bg_color'];
 			}
+			if (isset($settings['link_title']) && $settings['link_title'] !='') {
+				$link_title = $settings['link_title'];
+			}
+			else{
+				$link_title = __( 'Share this link with anyone!', 'sendfiles');
+			}
 			
 			ob_start();
 			?>
 
-			<div class="file-upload-wrapper" style="color:<?php echo $upload_font_color;?>">
+			<!-- file upload wrapper -->
+			<div class="file-upload-wrapper" style="color:<?php echo esc_attr($upload_font_color);?>">
 				<div class="error-message"></div>
 					<form id="dropit-form" enctype="multipart/form-data" method="POST" action="<?php echo esc_url( admin_url('admin-ajax.php') ); ?>" onSubmit="return false">
 						<input type="hidden" name="action" value="dropit" />
-						<div class="file-drop-area" style="border-color:<?php echo $border_color; ?>">
-							<!-- <span class="fake-btn"> -->
-								<!-- <label for="file-5"> -->
-									<!-- <figure style="background-color:<?php //echo $bg_color; ?>">
-										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17" style="fill:<?php echo $file_icon_color ?>"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg>
-									</figure> -->
-								<!-- </label> -->
-							<!-- </span> -->
-							<span class="file-msg js-set-number"><span><?php echo $file_text; ?></span></span>
+						<div class="file-drop-area" style="border-color:<?php echo esc_attr($border_color); ?>">
+							<span class="file-msg js-set-number"><span><?php echo esc_attr($file_text); ?></span></span>
 							<input class="file-input" type="file" name="dropit-files" id="dropit-files">
 						</div>
-						
+
+						<!-- file upload loader -->
 						<div class="loader">
 							<div class="spinner">
-							  <div class="bounce1" style="background-color:<?php echo $loading_bg_color; ?>" ></div>
-							  <div class="bounce2" style="background-color:<?php echo $loading_bg_color; ?>" ></div>
-							  <div class="bounce3" style="background-color:<?php echo $loading_bg_color; ?>" ></div>
-							  <div class="bounce4" style="background-color:<?php echo $loading_bg_color; ?>" ></div>
-							  <div class="bounce5" style="background-color:<?php echo $loading_bg_color; ?>" ></div>
+							  <div class="bounce1" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
+							  <div class="bounce2" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
+							  <div class="bounce3" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
+							  <div class="bounce4" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
+							  <div class="bounce5" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
 							</div>
 						</div>
+
 					</form>
-				<div class="shortlink-wrapper" style="background-color:<?php echo $link_bg_color; ?>">
+
+				<!-- sharable link wrapper -->
+				<div class="shortlink-wrapper" style="background-color:<?php echo esc_attr($link_bg_color); ?>">
 					<fieldset>
-						<lable style="color:<?php echo $link_title_color;?>">Link To Share This File With Anyone:</lable>
-						<a class="copy-btn" data-clipboard-target="#shortlink" style="color:<?php echo $link_title_color;?>">Copy Link</a><span class="copy-msg" style="color:<?php echo $link_title_color;?>"></span>
+						<lable style="color:<?php echo esc_attr($link_title_color);?>"><?php echo esc_attr($link_title);?></lable>
+						<a class="copy-btn" data-clipboard-target="#shortlink" style="color:<?php echo esc_attr($link_title_color);?>"><?php _e( '(Copied to clipboard)', 'sendfiles' );?></a><span class="copy-msg" style="color:<?php echo $link_title_color;?>"></span>
 						<input id="shortlink" type="text" size="60" />
 					</fieldset>
 				</div>
+
 			</div>
 
 			<?php
@@ -220,7 +230,7 @@ if(!class_exists('WP_DropIt')) {
 
 				$database = new DropitDatabase();
 				$results = $database->getData();
-				$clientIdentifier = "DropIt/1.0";
+				$clientIdentifier = "SendFiles/1.0";
 				$dbxClient = new dbx\Client($results->access_token, $clientIdentifier);
 				$name = $_FILES["dropit-files"]["name"];
 				$f = fopen($_FILES["dropit-files"]["tmp_name"], "rb");
@@ -241,7 +251,7 @@ if(!class_exists('WP_DropIt')) {
 
 				$link = $dbxClient->createTemporaryDirectLink($dropboxPath);
 				$dw_link = $link[0];
-				echo $dw_link;
+				echo $dw_link;//return the uploaded file url
 				die();
 			}
 
@@ -294,8 +304,6 @@ if(!class_exists('WP_DropIt')) {
 				$insert =  $database->insertData($data);
 				echo "1";
 			}
-
-
 }
 
 	new WP_DropIt();

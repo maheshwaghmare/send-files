@@ -1,11 +1,6 @@
 jQuery(document).ready(function($){
-   var myOptions = {
-    defaultColor: false,
-    change: function(event, ui){},
-    clear: function() {},
-    hide: true,
-    palettes: true
-};
+
+// alert(admin_dropit.some_string);
 
 
     $(document).on('click','#authorize-btn',function () {
@@ -34,7 +29,6 @@ jQuery(document).ready(function($){
                         $('.auth-message.success').text("Authentication is completed. Please Wait").fadeIn();
                         $('#auth-token').val('');
                         setTimeout(function(){ window.location.reload(true);}, 500);
-                         
                     }
                     $('#ajaxloader').hide();
                 },
@@ -97,6 +91,4 @@ jQuery(document).ready(function($){
         $('.token-wrapper').show();
     })
 
-    // wpColorPicker
-    $('.my-color-field').wpColorPicker(myOptions);
 });
