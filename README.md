@@ -1,2 +1,2 @@
 # send-files
-It will allow you upload large files on your Dropbox account and will return sharable public URL.
+Send Files is a simple plugin that connects with your Dropbox account. Once the plugin is installed and configured, you can create a beautiful page on your website where your users can upload files and share the link with you (or anyone else).
