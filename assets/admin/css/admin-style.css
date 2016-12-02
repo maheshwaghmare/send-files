@@ -1,0 +1,147 @@
+
+/*admin dashboard css*/
+.welcome-panel{	
+	margin-top: 24px;
+	border:none;
+	padding: 10px 40px;
+}
+.welcome-panel h2{
+	margin-top: 5px;
+}	
+.wrap h2.nav-tab-wrapper{
+	border: none;
+}
+#dialog-confirm{
+	display: none;
+}
+.dashicons.activate{
+	font-size: 30px;
+	margin: 0 10px;
+	color: green;
+}
+.account-info p{
+	text-align: right;
+}
+.token-wrapper{
+	display: none;
+}
+
+.dropit-settings-nav  a {
+    display: block;
+    padding: 10px;
+    width: 100%;
+    border: none;
+}
+.dropit-settings-nav  a:focus{
+    box-shadow: none ;
+}
+.dropit-settings-nav .nav-tab{
+	border: none;
+}
+.dropit-settings-nav .nav-tab-active{
+	background: #ffffff;
+}
+.welcome-panel select{
+	margin-top: -3px;
+}
+.actions-wrapper{
+	margin: 20px 0 0 22px;
+    max-width: 1050px;
+    background: #ffffff;
+}
+.actions-wrapper span{
+	padding-left: 15px;
+	padding-bottom: 10px;	
+}
+.form-table td {
+    padding: 15px 0px;
+}
+.authorize-btn,
+.done-btn {
+    padding-left: 15px;
+    background: #ffffff;
+    padding-bottom: 10px;
+}
+.another-account-btn{
+	padding-bottom: 10px;
+}
+.instructions-wrapper{
+	display: block;
+	background: #f1f1f1;
+	padding: 10px 15px;
+}
+.expiry-number{
+	width: 50px;
+}
+span.green,
+span.success{
+	color: green;	
+}
+span.error {
+	color: #ff0000;
+}
+.m-font{
+	font-size: 18px;
+}
+div.updated.notify{
+	margin-bottom: 0;
+}
+.basic-options-wrapper{
+  padding: 15px;
+}
+.submit-wrapper{
+	position: relative;
+}
+.auth-message{
+	display: block;
+	height: 20px;
+	float: left;
+}
+#ajaxloader
+{
+	display: none;
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	top: 0;
+	right: 0;
+	border: 8px solid #0085ba;
+	border-right-color: transparent;
+	border-radius: 50%;
+	/*box-shadow: 0 0 25px 2px #eee;*/
+	animation: spin 1s linear infinite;
+	-webkit-animation: spin 1s linear infinite;
+}
+@-webkit-keyframes spin
+{
+	from { transform: rotate(0deg);   opacity: 0.2; }
+	50%  { transform: rotate(180deg); opacity: 1.0; }
+	to   { transform: rotate(360deg); opacity: 0.2; }
+}
+
+@keyframes spin
+{
+	from { transform: rotate(0deg);   opacity: 0.2; }
+	50%  { transform: rotate(180deg); opacity: 1.0; }
+	to   { transform: rotate(360deg); opacity: 0.2; }
+}
+
+
+/*color picker*/
+.wp-dropit .wp-picker-container, .wp-picker-container:active{
+	position: absolute;
+	margin-top: -10px
+}
+.wp-dropit .wp-picker-container .iris-picker{
+	z-index: 99;
+}
+
+
+@media (min-width: 768px){
+
+	.dropit-settings-nav {
+	    float: left;
+	    margin: 15px 2% 0 0;
+	    width: 19%;
+	}
+}
