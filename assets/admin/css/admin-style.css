@@ -136,6 +136,24 @@ div.updated.notify{
 	z-index: 99;
 }
 
+/*
+.loader {
+  position:absolute;
+  right: 10px;
+  border: 10px solid #fff;
+  border-radius: 50%;
+  border-top: 10px solid #3498db;
+  width: 20px;
+  height: 20px;
+}
+
+.file-border {
+    border: 2px dashed #007bb9;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    right: 10px;
+}*/
 
 @media (min-width: 768px){
 

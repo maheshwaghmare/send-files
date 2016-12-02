@@ -52,6 +52,14 @@
                                     <label><?php echo __( 'File upload loader color', 'sendfiles' ); ?></label>
                                 </td>
                                 <td>
+                                    <input type="text" value="<?php echo (isset($settings['loading_border_color'])) ? $settings['loading_border_color'] : ''; ?>" name="dropit[loading_border_color]" class="color-picker" data-alpha="true" />
+                                </td>
+                            </tr>
+                            <tr class="form-field">
+                                <td>
+                                    <label><?php echo __( 'File upload loader backgrpund color', 'sendfiles' ); ?></label>
+                                </td>
+                                <td>
                                     <input type="text" value="<?php echo (isset($settings['loading_bg_color'])) ? $settings['loading_bg_color'] : ''; ?>" name="dropit[loading_bg_color]" class="color-picker" data-alpha="true" />
                                 </td>
                             </tr>

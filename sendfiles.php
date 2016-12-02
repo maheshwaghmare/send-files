@@ -179,6 +179,12 @@ if(!class_exists('WP_DropIt')) {
 			else{
 				$link_title = __( 'Share this link with anyone!', 'sendfiles');
 			}
+			if (isset($settings['loading_border_color'])) {
+				$loading_border_color = $settings['loading_border_color'];
+			}
+			if (isset($settings['loading_bg_color'])) {
+				$loading_bg_color = $settings['loading_bg_color'];
+			}
 			
 			ob_start();
 			?>
@@ -191,19 +197,8 @@ if(!class_exists('WP_DropIt')) {
 						<div class="file-drop-area" style="border-color:<?php echo esc_attr($border_color); ?>">
 							<span class="file-msg js-set-number"><span><?php echo esc_attr($file_text); ?></span></span>
 							<input class="file-input" type="file" name="dropit-files" id="dropit-files">
+							<div class="loader" style="border-color:<?php echo esc_attr($loading_bg_color); ?>;border-top-color:<?php echo esc_attr($loading_border_color); ?>"></div>
 						</div>
-
-						<!-- file upload loader -->
-						<div class="loader">
-							<div class="spinner">
-							  <div class="bounce1" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
-							  <div class="bounce2" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
-							  <div class="bounce3" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
-							  <div class="bounce4" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
-							  <div class="bounce5" style="background-color:<?php echo esc_attr($loading_bg_color); ?>" ></div>
-							</div>
-						</div>
-
 					</form>
 
 				<!-- sharable link wrapper -->

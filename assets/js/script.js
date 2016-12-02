@@ -8,13 +8,11 @@
 
 		clipboard.on('success', function(e) {
 		    $(".copy-msg").fadeIn().text("link copied");
-		    setTimeout(function(){ $(".copy-msg").empty().fadeOut()}, 1000);
 		    e.clearSelection();
 		});
 
 		clipboard.on('error', function(e) {
 		    $(".copy-msg").text("Copy to clipboard failed").fadeIn();
-		    setTimeout(function(){ $(".copy-msg").empty().fadeOut()}, 1000);
 		});
 
 
@@ -64,7 +62,7 @@
 			}
 			else{
 				$(".error-message").empty();
-				$(".loader").show();
+				$(".loader").css("visibility", "visible");
 				fd.append("dropit-files", individual_file);
 				fd.append('action', 'dropit');
 
@@ -90,12 +88,12 @@
 					    $(".file-input").val('');
 					    $(".shortlink-wrapper").show();
 					    $("#shortlink").val(response);
-					    $(".loader").hide();
+					    $(".loader").css("visibility", "hidden");
 					},
 					error: function (textStatus, errorThrown) {
 						 $(".error-message").empty();
 						 $(".error-message").html("something went wrong please try again");
-						 $(".loader").hide();
+						  $(".loader").css("visibility", "hidden");
 			        }
 				});
 
@@ -103,24 +101,12 @@
 		}
 	});
 
-
-	// function progressHandlerFunction(e) {
-	//     var percent=Math.round((e.loaded/e.total) * 100);
-	//     $('.di-bar').css('width', percent+'%');
-	// }
-
-
 	/*
 	* select generated shortlink
 	*/
 	$(document).on('click','#shortlink',function () {
 		$(this).select();
-		document.execCommand('copy');
-		$(".copy-msg").fadeIn().text("link copied");
-		setTimeout(function(){ $(".copy-msg").empty().fadeOut()}, 1000);
 	});
-
-
 
 })(jQuery);
 
