@@ -2,23 +2,23 @@
 
 use Dropbox as dbx;
 
-    add_filter( 'cron_schedules', 'dropit_add_cron_intervals' );
-    add_action( 'dropit_cron_hook', 'dropit_cron_exec' );        
+    add_filter( 'cron_schedules', 'sendfiles_add_cron_intervals' );
+    add_action( 'sendfiles_cron_hook', 'sendfiles_cron_exec' );        
        
-    if(isset($_POST['wp-dropit-basic'])) {
-        wp_clear_scheduled_hook('dropit_cron_hook');   
+    if(isset($_POST['wp-sendfiles-basic'])) {
+        wp_clear_scheduled_hook('sendfiles_cron_hook');   
     }
 
     /*
     *   create schedule for specific time
     */          
     
-    function dropit_add_cron_intervals( $schedules ) {
-            if(isset($_POST['wp-dropit-basic'])) {
-                $settings = (isset($_POST['dropit'])) ? $_POST['dropit'] : array();
-                 update_option( 'wp-dropit-basic', $settings );
+    function sendfiles_add_cron_intervals( $schedules ) {
+            if(isset($_POST['wp-sendfiles-basic'])) {
+                $settings = (isset($_POST['sendfiles'])) ? $_POST['sendfiles'] : array();
+                 update_option( 'wp-sendfiles-basic', $settings );
             }
-            $settings = (get_option( 'wp-dropit-basic' )) ? get_option( 'wp-dropit-basic' ) : array();
+            $settings = (get_option( 'wp-sendfiles-basic' )) ? get_option( 'wp-sendfiles-basic' ) : array();
             if (!isset($settings['expiry_type'])) {
                 $settings['expiry_type'] ='';
             }
@@ -54,17 +54,17 @@ use Dropbox as dbx;
     *   schedule event 
     */
 
-    if( !wp_next_scheduled( 'dropit_cron_hook' ) ) {
-        wp_schedule_event( time(), 'specific_time', 'dropit_cron_hook' );
+    if( !wp_next_scheduled( 'sendfiles_cron_hook' ) ) {
+        wp_schedule_event( time(), 'specific_time', 'sendfiles_cron_hook' );
     }
 
 
     /*
     *   create schedule for deleting file after specific time
     */
-    function dropit_cron_exec() {
+    function sendfiles_cron_exec() {
 
-        $settings = (get_option( 'wp-dropit-basic' )) ? get_option( 'wp-dropit-basic' ) : array(); 
+        $settings = (get_option( 'wp-sendfiles-basic' )) ? get_option( 'wp-sendfiles-basic' ) : array(); 
         if (!isset($settings['expiry_type'])) {
                 $settings['expiry_type'] ='';
             }
@@ -86,7 +86,7 @@ use Dropbox as dbx;
                 break;
         }($settings['expiry_type']);
 
-        $database = new DropitDatabase();
+        $database = new SendfilesDatabase();
         $results = $database->getData();
         $files = $database->getFileData($results->user_id);
 

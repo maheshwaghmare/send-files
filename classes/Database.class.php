@@ -4,7 +4,7 @@ use Dropbox as dbx;
 
 
 
-class DropitDatabase {
+class SendfilesDatabase {
 
 
 	function __construct() {
@@ -19,9 +19,9 @@ class DropitDatabase {
 
       	global $wpdb;
 		// creates my_table in database if not exists
-		$table = $wpdb->prefix . "dropit"; 
+		$table = $wpdb->prefix . "sendfiles"; 
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql_dropit = "CREATE TABLE $table (
+		$sql_sendfiles = "CREATE TABLE $table (
 			id int(11) DEFAULT '1',
 			auth_code text NULL,
 			access_token text NULL,
@@ -35,11 +35,11 @@ class DropitDatabase {
 		) $charset_collate;";
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-		dbDelta( $sql_dropit);
+		dbDelta( $sql_sendfiles);
 
 
-		$table_files = $wpdb->prefix . "dropit_files"; 
-		$sql_dropit_files = "CREATE TABLE $table_files (
+		$table_files = $wpdb->prefix . "sendfiles_files"; 
+		$sql_sendfiles_files = "CREATE TABLE $table_files (
 			id int(11) NOT NULL AUTO_INCREMENT,
 			user_id int(11) NULL,
 			file varchar(200) NULL,
@@ -47,7 +47,7 @@ class DropitDatabase {
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 
-		dbDelta( $sql_dropit_files );
+		dbDelta( $sql_sendfiles_files );
 		
 		$wpdb->insert( 
 			$table, 
@@ -59,11 +59,11 @@ class DropitDatabase {
 
 
 	/*
-	* insert data to wpdropit table
+	* insert data to wpsendfiles table
 	*/
     public function insertData($data) {
 		global $wpdb;
-		$tablename=$wpdb->prefix.'dropit';
+		$tablename=$wpdb->prefix.'sendfiles';
 		//access code and user id
 		if (isset($data['userId'])) {
 
@@ -108,12 +108,12 @@ class DropitDatabase {
 
 
 	/*
-	* get data from wpdropit table
+	* get data from wpsendfiles table
 	*/
     public function getData()
     {
     	global $wpdb;
-    	$table_name = $wpdb->prefix . 'dropit';    
+    	$table_name = $wpdb->prefix . 'sendfiles';    
     	$results = $wpdb->get_row( "SELECT * FROM $table_name" );
     	return $results;
 
@@ -122,12 +122,12 @@ class DropitDatabase {
 
 
 	/*
-	* get data from dropit_files table
+	* get data from sendfiles_files table
 	*/
     public function getFileData($user_id)
     {
     	global $wpdb;
-    	$table_files = $wpdb->prefix . 'dropit_files';    
+    	$table_files = $wpdb->prefix . 'sendfiles_files';    
     	$results = $wpdb->get_results("SELECT * FROM $table_files WHERE user_id = $user_id ;");
     	return $results;
     	 
@@ -135,12 +135,12 @@ class DropitDatabase {
     }
 
 	/*
-	* insert data to dropit_files table
+	* insert data to sendfiles_files table
 	*/
 	public function insertFiles($data)
 	{
 		global $wpdb;
-		$table_files = $wpdb->prefix . "dropit_files"; 
+		$table_files = $wpdb->prefix . "sendfiles_files"; 
 		$result = $wpdb->insert(
 			$table_files,
 				array( 
@@ -153,12 +153,12 @@ class DropitDatabase {
 
 
 	/*
-	* delete file from dropit_files table
+	* delete file from sendfiles_files table
 	*/
 	public function deleteFiles($data)
 	{
 		global $wpdb;
-		$table_files = $wpdb->prefix . "dropit_files"; 
+		$table_files = $wpdb->prefix . "sendfiles_files"; 
 		  $result = $wpdb->delete(
 			$table_files,
 				array( 
@@ -174,11 +174,11 @@ class DropitDatabase {
 	public function dropTable() {	
 
 		global $wpdb;
-	    $table_name = $wpdb->prefix . 'dropit';
+	    $table_name = $wpdb->prefix . 'sendfiles';
 	    $sql = "DROP TABLE IF EXISTS $table_name";
 	    $wpdb->query($sql);
 
-	    $table_name = $wpdb->prefix . 'dropit_files';
+	    $table_name = $wpdb->prefix . 'sendfiles_files';
 	    $sql = "DROP TABLE IF EXISTS $table_name";
 	    $wpdb->query($sql);
 	}

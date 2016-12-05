@@ -1,7 +1,7 @@
 
 <!-- dashboard -->
-    <div class="wrap wp-dropit">
-      <h1><?php _e( 'SendFiles Settings', 'sendfiles');?></h1>
+    <div class="wrap wp-sendfiles">
+      <h1><?php _e( 'Send Files Settings', 'sendfiles');?></h1>
          
         <?php
             if( isset( $_GET[ 'tab' ] ) ) {
@@ -11,12 +11,12 @@
         ?>
          
          <!-- tabs -->
-         <div class="dropit-settings-nav">
+         <div class="sendfiles-settings-nav">
             <h2 class="nav-tab-wrapper">
-                <a href="?page=wp-dropit&tab=welcome" class="nav-tab <?php echo $active_tab == 'welcome' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'sendfiles');?></a>
-                <a href="?page=wp-dropit&tab=dropbox_options" class="nav-tab <?php echo $active_tab == 'dropbox_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Dropbox Options', 'sendfiles');?></a>
-                <a href="?page=wp-dropit&tab=general_options" class="nav-tab <?php echo $active_tab == 'general_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'General Options', 'sendfiles');?></a>
-                <a href="?page=wp-dropit&tab=how_it_works" class="nav-tab <?php echo $active_tab == 'how_it_works' ? 'nav-tab-active' : ''; ?>"><?php _e( 'How It Works?', 'sendfiles');?></a>
+                <a href="?page=wp-sendfiles&tab=welcome" class="nav-tab <?php echo $active_tab == 'welcome' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'sendfiles');?></a>
+                <a href="?page=wp-sendfiles&tab=dropbox_options" class="nav-tab <?php echo $active_tab == 'dropbox_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Dropbox Options', 'sendfiles');?></a>
+                <a href="?page=wp-sendfiles&tab=general_options" class="nav-tab <?php echo $active_tab == 'general_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'General Options', 'sendfiles');?></a>
+                <a href="?page=wp-sendfiles&tab=how_it_works" class="nav-tab <?php echo $active_tab == 'how_it_works' ? 'nav-tab-active' : ''; ?>"><?php _e( 'How It Works?', 'sendfiles');?></a>
             </h2>
          </div>
 
@@ -26,10 +26,10 @@
 
             <div class="welcome-panel">
                 <h1><?php _e( 'Welcome to', 'sendfiles');?> <span class="version"><?php _e( 'Send Files', 'sendfiles');?></span></h1>
-                <?php _e( 'Thank you for choosing DropIt', 'sendfiles');?>
+                <?php _e( 'Thank you for choosing sendfiles', 'sendfiles');?>
                 <h4><?php _e( 'The easiest way to share files using Dropbox.', 'sendfiles');?></h4>
                 <h4><?php _e( 'It will allow you upload large files on your Dropbox account and will return sharable public URL.', 'sendfiles');?></h4>            <br>
-                <h3><?php _e( 'Getting Started -', 'sendfiles');?> <a href="?page=wp-dropit&tab=dropbox_options"><?php _e( 'Connect with your Dropbox Account.', 'sendfiles');?></a></h3>
+                <h3><?php _e( 'Getting Started -', 'sendfiles');?> <a href="?page=wp-sendfiles&tab=dropbox_options"><?php _e( 'Connect with your Dropbox Account.', 'sendfiles');?></a></h3>
             </div>
 
         <?php endif;?>
@@ -41,17 +41,17 @@
          ?>
         <?php
             $is_update = false;
-            if(isset($_POST['wp-dropit-button'])) {
-                $settings = (isset($_POST['dropit'])) ? $_POST['dropit'] : array();
-                $is_update = update_option( 'wpdropit', $settings );
+            if(isset($_POST['wp-sendfiles-button'])) {
+                $settings = (isset($_POST['sendfiles'])) ? $_POST['sendfiles'] : array();
+                $is_update = update_option( 'wpsendfiles', $settings );
             }
-            $settings = (get_option( 'wpdropit' )) ? get_option( 'wpdropit' ) : array(); 
+            $settings = (get_option( 'wpsendfiles' )) ? get_option( 'wpsendfiles' ) : array(); 
         ?>
 
         <div class="welcome-panel">
                 <?php 
                 // get all data base from database
-                $database = new DropitDatabase();
+                $database = new SendfilesDatabase();
                 $results = $database->getData();
 
                 if ($results->user_id != null) : 
@@ -72,7 +72,7 @@
 
                 else :
                     echo "<div class='panel-content'>";
-                    echo '<h3>'.__( ' In order to use DropIt you will need to connect with your Dropbox account.', 'sendfiles').'</h3><br><hr>';
+                    echo '<h3>'.__( ' In order to use Send Files you will need to connect with your Dropbox account.', 'sendfiles').'</h3><br><hr>';
                     echo '<p><b>'.__( 'Step 1.</b> Please click the [Connect With Dropbox] button below and get the Token from pop up window.', 'sendfiles').'</p>';
                     $dropbox = new Dropbox();
                     $dropboxAuthUrl = $dropbox->getAuthUrl();
@@ -98,7 +98,7 @@
                                 <tr>
                                     <td colspan="2">
                                         <div class="submit-wrapper">
-                                            <input type="button" id="authorize-btn"   name="wp-dropit-button" class="button-primary" value="<?php echo __( 'Save Settings', 'sendfiles' ); ?>" />
+                                            <input type="button" id="authorize-btn"   name="wp-sendfiles-button" class="button-primary" value="<?php echo __( 'Save Settings', 'sendfiles' ); ?>" />
                                             <div id="ajaxloader"></div>
                                         </div>
                                     </td>

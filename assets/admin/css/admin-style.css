@@ -26,19 +26,19 @@
 	display: none;
 }
 
-.dropit-settings-nav  a {
+.sendfiles-settings-nav  a {
     display: block;
     padding: 10px;
     width: 100%;
     border: none;
 }
-.dropit-settings-nav  a:focus{
+.sendfiles-settings-nav  a:focus{
     box-shadow: none ;
 }
-.dropit-settings-nav .nav-tab{
+.sendfiles-settings-nav .nav-tab{
 	border: none;
 }
-.dropit-settings-nav .nav-tab-active{
+.sendfiles-settings-nav .nav-tab-active{
 	background: #ffffff;
 }
 .welcome-panel select{
@@ -128,11 +128,11 @@ div.updated.notify{
 
 
 /*color picker*/
-.wp-dropit .wp-picker-container, .wp-picker-container:active{
+.wp-sendfiles .wp-picker-container, .wp-picker-container:active{
 	position: absolute;
 	margin-top: -10px
 }
-.wp-dropit .wp-picker-container .iris-picker{
+.wp-sendfiles .wp-picker-container .iris-picker{
 	z-index: 99;
 }
 
@@ -157,7 +157,7 @@ div.updated.notify{
 
 @media (min-width: 768px){
 
-	.dropit-settings-nav {
+	.sendfiles-settings-nav {
 	    float: left;
 	    margin: 15px 2% 0 0;
 	    width: 19%;

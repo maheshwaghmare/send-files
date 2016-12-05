@@ -22,11 +22,10 @@ require_once(SENDFILES_PATH.'classes/Database.class.php');
 include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
 
 ini_set('max_execution_time', 300);
-
 use \Dropbox as dbx;
 
-if(!class_exists('WP_DropIt')) {
-	class WP_DropIt{
+if(!class_exists('WP_SendFiles')) {
+	class WP_SendFiles{
 
 	  // Constructor
 	    function __construct() {
@@ -35,19 +34,19 @@ if(!class_exists('WP_DropIt')) {
 	        register_deactivation_hook( __FILE__, array( $this, 'wpa_uninstall' ) );
 
 	        add_action( 'admin_menu', array( $this, 'init_admin_menu' ) );
-			add_shortcode( 'wpdropit', array($this, 'dropit_shortcode') );
+			add_shortcode( 'sendfiles', array($this, 'sendfilesShortcode') );
 
-			add_action( 'wp_ajax_dropit', array($this, 'dropit_process') );
-			add_action( 'wp_ajax_nopriv_dropit', array($this, 'dropit_process') );
+			add_action( 'wp_ajax_sendfiles', array($this, 'sendfiles_process') );
+			add_action( 'wp_ajax_nopriv_sendfiles', array($this, 'sendfiles_process') );
 
-			add_action( 'wp_ajax_dropit_authenticate', array($this, 'dropit_authenticate_process') );
-			add_action( 'wp_ajax_nopriv_dropit_authenticate', array($this, 'dropit_authenticate_process') );
+			add_action( 'wp_ajax_sendfiles_authenticate', array($this, 'sendfiles_authenticate_process') );
+			add_action( 'wp_ajax_nopriv_sendfiles_authenticate', array($this, 'sendfiles_authenticate_process') );
 
-			add_action( 'wp_ajax_dropit_disconnect', array($this, 'dropit_disconnect_process') );
-			add_action( 'wp_ajax_nopriv_dropit_disconnect', array($this, 'dropit_disconnect_process') );
+			add_action( 'wp_ajax_sendfiles_disconnect', array($this, 'sendfiles_disconnect_process') );
+			add_action( 'wp_ajax_nopriv_sendfiles_disconnect', array($this, 'sendfiles_disconnect_process') );
 
-			add_action( 'wp_enqueue_scripts', array($this, 'dropit_assets') );
-			add_action( 'admin_enqueue_scripts', array($this, 'dropit_admin_assets') );
+			add_action( 'wp_enqueue_scripts', array($this, 'sendfiles_assets') );
+			add_action( 'admin_enqueue_scripts', array($this, 'sendfiles_admin_assets') );
 
 	    }
 
@@ -58,18 +57,18 @@ if(!class_exists('WP_DropIt')) {
 
 	        add_submenu_page(
 				'options-general.php',
-				__( 'DropIt', 'sendfiles' ),
-				__( 'DropIt', 'sendfiles' ),
+				__( 'Send Files', 'sendfiles' ),
+				__( 'Send Files', 'sendfiles' ),
 				'manage_options',
-				'wp-dropit',
-				array( $this, 'dropit_admin_page' )
+				'wp-sendfiles',
+				array( $this, 'sendfiles_admin_page' )
 				);
 	    }
 
 		/*
 		* Actions perform on loading of menu pages
 		*/
-	    function dropit_admin_page() {
+	    function sendfiles_admin_page() {
 
 
 	    	include_once SENDFILES_PATH.'admin/dashboard.php';
@@ -83,7 +82,7 @@ if(!class_exists('WP_DropIt')) {
 	    function wpa_install() {
 
 	    	// create table
-	    	 $database = new DropitDatabase();
+	    	 $database = new SendfilesDatabase();
 	    	 $database->createTable();
 
 
@@ -95,7 +94,7 @@ if(!class_exists('WP_DropIt')) {
 	    function wpa_uninstall() {
 
 	    	// drop table
-			$database = new DropitDatabase();
+			$database = new SendfilesDatabase();
 			$database->dropTable();
 
 	    }
@@ -103,44 +102,53 @@ if(!class_exists('WP_DropIt')) {
 		/*
 		* Actions perform to add styles & scripts
 		*/
-		function dropit_assets() {
+		function sendfiles_assets() {
 
 			wp_enqueue_script( 'jquery' );
-			wp_register_script( 'dropit-js', plugin_dir_url( __FILE__ ).'assets/js/script.js', array('jquery'), SENDFILES_VERSION );
+			wp_register_script( 'sendfiles-js', plugin_dir_url( __FILE__ ).'assets/js/script.js', array('jquery'), SENDFILES_VERSION );
+
+			// Localize the script with new data
+			$messages_array = array(
+				'copy_clipboard' => __('(Copied to clipboard)' ,'sendfiles'),
+				'copy_clipboard_fail' => __('(Copy to clipboard failed)' ,'sendfiles'),
+				'select_file'=>__('Please select a file to upload' , 'sendfiles'),
+				'error_message'=>__('Something went wrong please try again' , 'sendfiles'),
+			);
+			wp_localize_script( 'sendfiles-js', 'sendfiles', $messages_array );
+
 			wp_register_script( 'clipboard-js', plugin_dir_url( __FILE__ ).'assets/js/clipboard.min.js', array('jquery')  );
-			wp_enqueue_script( 'dropit-js' );
+			wp_enqueue_script( 'sendfiles-js' );
 			wp_enqueue_script( 'clipboard-js' );
 
-			wp_register_style( 'dropit-css', plugin_dir_url( __FILE__ ).'assets/css/style.css', null, SENDFILES_VERSION );
-			wp_enqueue_style( 'dropit-css' );
+			wp_register_style( 'sendfiles-css', plugin_dir_url( __FILE__ ).'assets/css/style.css', null, SENDFILES_VERSION );
+			wp_enqueue_style( 'sendfiles-css' );
 
 		}
 
 		/*
 		* Actions perform to add admin styles & scripts
 		*/
-		function dropit_admin_assets(){
+		function sendfiles_admin_assets(){
 
 			wp_enqueue_script( 'jquery' );
 	        wp_enqueue_style( 'wp-color-picker' );
 	        wp_enqueue_style( 'wp-jquery-ui-dialog' );
-			wp_register_script( 'admin-dropit-js', plugin_dir_url( __FILE__ ).'assets/admin/js/admin-script.js', array('jquery','jquery-ui-dialog'), SENDFILES_VERSION );
+			wp_register_script( 'admin-sendfiles-js', plugin_dir_url( __FILE__ ).'assets/admin/js/admin-script.js', array('jquery','jquery-ui-dialog'), SENDFILES_VERSION );
 			wp_enqueue_script( 'wp-color-picker-alpha', plugin_dir_url( __FILE__ ).'assets/admin/js/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), SENDFILES_VERSION);
-			wp_register_style( 'admin-dropit-css', plugin_dir_url( __FILE__ ).'assets/admin/css/admin-style.css', null, SENDFILES_VERSION );
+			wp_register_style( 'admin-sendfiles-css', plugin_dir_url( __FILE__ ).'assets/admin/css/admin-style.css', null, SENDFILES_VERSION );
 
 			// Localize the script with new data
-			// $messages_array = array(
-			// 	'some_string' => __( 'Some string to translate', 'plugin-domain' ),
-			// 	'a_value' => '10'
-			// );
-			// wp_localize_script( 'admin-dropit-js', 'admin_dropit', $translation_array );
-
-
-			wp_localize_script( 'admin-dropit-js', 'admin_dropit', array(
-				'admin_dropit_url' => admin_url( 'admin-ajax.php' )
-			));
-			wp_enqueue_script( 'admin-dropit-js' );
-			wp_enqueue_style( 'admin-dropit-css' );
+			$messages_array = array(
+				'add_token' => __('Please add the Token' ,'sendfiles'),
+				'token_expire'=>__('Token doesn\'t exist or has expired, please try to add valid token.' , 'sendfiles'),
+				'auth_success'=>__('Authentication is completed. Please Wait' , 'sendfiles'),
+				'disconnect_success'=>__('Successfully disconnected. Please Wait' , 'sendfiles'),
+				'error_message'=>__('Something went wrong please try again' , 'sendfiles'),
+				'admin_sendfiles_url' => admin_url( 'admin-ajax.php' )
+			);
+			wp_localize_script( 'admin-sendfiles-js', 'admin_sendfiles', $messages_array );
+			wp_enqueue_script( 'admin-sendfiles-js' );
+			wp_enqueue_style( 'admin-sendfiles-css' );
 		}
 
 
@@ -148,43 +156,46 @@ if(!class_exists('WP_DropIt')) {
 		/*
 		* Actions perform for Shortcode
 		*/
-		function dropit_shortcode( $attr, $content ) {
+		function sendfilesShortcode( $attr, $content ) {
 
-			
-			$settings = (get_option( 'wp-dropit-basic' )) ? get_option( 'wp-dropit-basic' ) : array();
-			if (isset($settings['border_color'])) {
+			// get field value of general options
+			$settings = (get_option( 'wp-sendfiles-basic' )) ? get_option( 'wp-sendfiles-basic' ) : array();
+			if (isset($settings['border_color']) && $settings['border_color'] !='') 
 			    $border_color = $settings['border_color'];
-			}
-			if (isset($settings['loading_bg_color'])) {
+			else
+				$border_color = '';
+			if (isset($settings['loading_bg_color'])) 
 				$loading_bg_color = $settings['loading_bg_color'];	
-			}
-			if (isset($settings['file_text']) && $settings['file_text'] !='') {
+			else
+				$loading_bg_color = '';
+			if (isset($settings['file_text']) && $settings['file_text'] !='') 
 				$file_text = $settings['file_text'];
-			}
-			else{
+			else
 				$file_text = __( ' Drop file here or click to upload.', 'sendfiles' );
-			}
-			if (isset($settings['upload_font_color'])) {
+			if (isset($settings['upload_font_color'])) 
 				$upload_font_color = $settings['upload_font_color'];	
-			}
-			if (isset($settings['link_title_color'])) {
+			else
+				$upload_font_color = '';
+			if (isset($settings['link_title_color'])) 
 				$link_title_color = $settings['link_title_color'];	
-			}
-			if (isset($settings['link_bg_color'])) {
+			else
+				$link_title_color = '';
+			if (isset($settings['link_bg_color'])) 
 				$link_bg_color = $settings['link_bg_color'];
-			}
-			if (isset($settings['link_title']) && $settings['link_title'] !='') {
+			else
+				$link_bg_color = '';
+			if (isset($settings['link_title']) && $settings['link_title'] !='') 
 				$link_title = $settings['link_title'];
-			}
-			else{
+			else
 				$link_title = __( 'Share this link with anyone!', 'sendfiles');
-			}
-			if (isset($settings['loading_border_color'])) {
+			if (isset($settings['loading_border_color'])) 
 				$loading_border_color = $settings['loading_border_color'];
-			}
-			if (isset($settings['loading_bg_color'])) {
+			else
+				$loading_border_color = '';
+			if (isset($settings['loading_bg_color'])) 
 				$loading_bg_color = $settings['loading_bg_color'];
-			}
+			else
+				$loading_bg_color = '';
 			
 			ob_start();
 			?>
@@ -192,11 +203,11 @@ if(!class_exists('WP_DropIt')) {
 			<!-- file upload wrapper -->
 			<div class="file-upload-wrapper" style="color:<?php echo esc_attr($upload_font_color);?>">
 				<div class="error-message"></div>
-					<form id="dropit-form" enctype="multipart/form-data" method="POST" action="<?php echo esc_url( admin_url('admin-ajax.php') ); ?>" onSubmit="return false">
-						<input type="hidden" name="action" value="dropit" />
+					<form id="sendfiles-form" enctype="multipart/form-data" method="POST" action="<?php echo esc_url( admin_url('admin-ajax.php') ); ?>" onSubmit="return false">
+						<input type="hidden" name="action" value="sendfiles" />
 						<div class="file-drop-area" style="border-color:<?php echo esc_attr($border_color); ?>">
-							<span class="file-msg js-set-number"><span><?php echo esc_attr($file_text); ?></span></span>
-							<input class="file-input" type="file" name="dropit-files" id="dropit-files">
+							<span class="file-msg js-set-number" data-choose-title="<?php echo esc_attr($file_text); ?>" ><?php echo esc_attr($file_text); ?></span>
+							<input class="file-input" type="file" name="sendfiles-files" id="sendfiles-files">
 							<div class="loader" style="border-color:<?php echo esc_attr($loading_bg_color); ?>;border-top-color:<?php echo esc_attr($loading_border_color); ?>"></div>
 						</div>
 					</form>
@@ -221,14 +232,14 @@ if(!class_exists('WP_DropIt')) {
 			/*
 			* Actions perform to upload image to dropbox
 			*/
-			function dropit_process() {
+			function sendfiles_process() {
 
-				$database = new DropitDatabase();
+				$database = new SendfilesDatabase();
 				$results = $database->getData();
 				$clientIdentifier = "SendFiles/1.0";
 				$dbxClient = new dbx\Client($results->access_token, $clientIdentifier);
-				$name = $_FILES["dropit-files"]["name"];
-				$f = fopen($_FILES["dropit-files"]["tmp_name"], "rb");
+				$name = $_FILES["sendfiles-files"]["name"];
+				$f = fopen($_FILES["sendfiles-files"]["tmp_name"], "rb");
 				$result = $dbxClient->uploadFile("/".$name, dbx\WriteMode::add(), $f);
 				fclose($f);
 				$file = $dbxClient->getMetadata('/'.$name);
@@ -254,7 +265,7 @@ if(!class_exists('WP_DropIt')) {
 			/*
 			* Actions perform for authentication
 			*/
-			function dropit_authenticate_process() {
+			function sendfiles_authenticate_process() {
 				$dropbox = new Dropbox();
 		    	$webAuth = $dropbox->getWebAuth();
 
@@ -268,7 +279,7 @@ if(!class_exists('WP_DropIt')) {
 				}
 
 				$client = $dropbox->getClient($accessToken);
-			    $database = new DropitDatabase();
+			    $database = new SendfilesDatabase();
 
 	            $data = array(
 	            	"accessToken" => $accessToken,
@@ -286,8 +297,8 @@ if(!class_exists('WP_DropIt')) {
 			/*
 			* Actions perform for authentication
 			*/
-			function dropit_disconnect_process() {
-				$database = new DropitDatabase();
+			function sendfiles_disconnect_process() {
+				$database = new SendfilesDatabase();
 	            $data = array(
 	            	"accessToken" => null,
 	            	 "userId" => null,
@@ -301,5 +312,5 @@ if(!class_exists('WP_DropIt')) {
 			}
 }
 
-	new WP_DropIt();
+	new WP_SendFiles();
 }

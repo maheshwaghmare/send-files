@@ -7,12 +7,12 @@
 		clipboard = new Clipboard('.copy-btn');
 
 		clipboard.on('success', function(e) {
-		    $(".copy-msg").fadeIn().text("(Copied to clipboard)");
+		    $(".copy-msg").fadeIn().text(sendfiles.copy_clipboard);
 		    e.clearSelection();
 		});
 
 		clipboard.on('error', function(e) {
-		    $(".copy-msg").text("Copy to clipboard failed").fadeIn();
+		    $(".copy-msg").text(sendfiles.copy_clipboard_fail).fadeIn();
 		});
 
 
@@ -47,26 +47,34 @@
 		});
 
 
+
+
+
 		/*
 		* file upload
 		*/
 		function autoUploadFiles(){
+
+			
+			var choose_title = $('.file-msg').data('choose-title');
+
 			var fd = new FormData();
 			var fd = new FormData();
-			var file = $(document).find('#dropit-files');	
+			var file = $(document).find('#sendfiles-files');
+
 			var individual_file = file[0].files[0];
 			
 			if (file[0].files.length==0) {
 				$(".error-message").empty();
-				$(".error-message").html("please select a file to upload");
+				$(".error-message").html(sendfiles.select_file);
 			}
 			else{
 				$(".error-message").empty();
 				$(".loader").css("visibility", "visible");
-				fd.append("dropit-files", individual_file);
-				fd.append('action', 'dropit');
+				fd.append("sendfiles-files", individual_file);
+				fd.append('action', 'sendfiles');
 
-				var ajaxurl = $('#dropit-form').attr('action');
+				var ajaxurl = $('#sendfiles-form').attr('action');
 				var percent = $('.percent');
 				var bar = $('.bar');
 
@@ -84,7 +92,7 @@
 					// 	return myXhr;
 					// },
 					success: function(response){
-					    $(".file-msg").text(' Drop file here or click to upload.');
+					    $(".file-msg").text(choose_title);
 					    $(".file-input").val('');
 					    $(".shortlink-wrapper").show();
 					    $("#shortlink").val(response);
@@ -92,7 +100,7 @@
 					},
 					error: function (textStatus, errorThrown) {
 						 $(".error-message").empty();
-						 $(".error-message").html("something went wrong please try again");
+						 $(".error-message").html(sendfiles.error_message);
 						  $(".loader").css("visibility", "hidden");
 			        }
 				});
