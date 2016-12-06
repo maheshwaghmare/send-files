@@ -15,6 +15,7 @@
             <h2 class="nav-tab-wrapper">
                 <a href="?page=wp-sendfiles&tab=welcome" class="nav-tab <?php echo $active_tab == 'welcome' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'sendfiles');?></a>
                 <a href="?page=wp-sendfiles&tab=dropbox_options" class="nav-tab <?php echo $active_tab == 'dropbox_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Dropbox Options', 'sendfiles');?></a>
+                <a href="?page=wp-sendfiles&tab=gdrive_options" class="nav-tab <?php echo $active_tab == 'gdrive_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Google Drive Options', 'sendfiles');?></a>
                 <a href="?page=wp-sendfiles&tab=general_options" class="nav-tab <?php echo $active_tab == 'general_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'General Options', 'sendfiles');?></a>
                 <a href="?page=wp-sendfiles&tab=how_it_works" class="nav-tab <?php echo $active_tab == 'how_it_works' ? 'nav-tab-active' : ''; ?>"><?php _e( 'How It Works?', 'sendfiles');?></a>
             </h2>
@@ -118,3 +119,60 @@
 
         <?php endif; ?>
     
+
+     <!-- google drive options tabs -->
+        <?php 
+         if ($active_tab == 'gdrive_options' ):
+         ?>
+        <?php
+            $is_update = false;
+            if(isset($_POST['wp-sendfiles-gdrive'])) {
+                $settings = (isset($_POST['sendfiles'])) ? $_POST['sendfiles'] : array();
+                $is_update = update_option( 'wpsendfiles', $settings );
+            }
+            $settings = (get_option( 'wpsendfiles' )) ? get_option( 'wpsendfiles' ) : array(); 
+        ?>
+
+        <div class="welcome-panel">
+                <?php 
+                    echo "<div class='account-info'><h1>". __( 'Google Drive Account Details', 'sendfiles')."<span class='dashicons dashicons-yes activate'></span><span class='green'>".__('Connected', 'sendfiles')."</span></h1>";
+                    // ?>
+                    <hr>
+                        <div class="token-wrapper">
+                            <p><b><?php _e( 'Step 2.', 'sendfiles');?></b> 
+                                <?php _e( 'Add Token and save settings', 'sendfiles');?>
+                            </p>
+
+
+                        <form method="post" class="token-form" name="token-form">
+                            <table id="createuser" class="form-table">
+                                <tr class="form-field">
+                                    <td>
+                                        <label><?php echo __( 'Token', 'sendfiles' ); ?></label>
+                                    </td>
+                                    <td>
+                                        <input type="text" id="auth-token-gdrive" required  placeHolder="please enter the token"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="submit-wrapper">
+                                            <input type="button" id="authorize-btn-gdrive"   name="wp-sendfiles-gdrive" class="button-primary" value="<?php echo __( 'Save Settings', 'sendfiles' ); ?>" />
+                                            <div id="ajaxloader"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+                    <br><span class="auth-message success"></span>
+                    <br><span class="auth-message error"></span>
+                    <!-- disconnected modal message -->
+                    <div id="dialog-confirm" title="Disconnect with dropbox?">
+                    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span><?php _e( 'Do you really want to disconnect with Dropbox?', 'sendfiles');?></p>
+                    </div>
+                </div>
+            </div>
+
+        <?php endif; ?>

@@ -17,9 +17,14 @@ if(!defined('SENDFILES_PATH')) {
 }
 
 require_once(SENDFILES_PATH.'dropbox/autoload.php');
+require_once(SENDFILES_PATH.'drive/autoload.php');
 require_once(SENDFILES_PATH.'classes/Dropbox.class.php');
+require_once(SENDFILES_PATH.'classes/class.gdrive.php');
 require_once(SENDFILES_PATH.'classes/Database.class.php');
 include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
+
+
+
 
 ini_set('max_execution_time', 300);
 use \Dropbox as dbx;
@@ -42,8 +47,12 @@ if(!class_exists('WP_SendFiles')) {
 			add_action( 'wp_ajax_sendfiles_authenticate', array($this, 'sendfiles_authenticate_process') );
 			add_action( 'wp_ajax_nopriv_sendfiles_authenticate', array($this, 'sendfiles_authenticate_process') );
 
+			// google drive authentication process
+			add_action( 'wp_ajax_sendfiles_authenticate_gdrive', array($this, 'sendfiles_authenticate_gdrive_process') );
+			add_action( 'wp_ajax_nopriv_sendfiles_authenticate_gdrive', array($this, 'sendfiles_authenticate_gdrive_process') );
+// 
 			add_action( 'wp_ajax_sendfiles_disconnect', array($this, 'sendfiles_disconnect_process') );
-			add_action( 'wp_ajax_nopriv_sendfiles_disconnect', array($this, 'sendfiles_disconnect_process') );
+			// add_action( 'wp_ajax_nopriv_sendfiles_disconnect', array($this, 'sendfiles_disconnect_process') );
 
 			add_action( 'wp_enqueue_scripts', array($this, 'sendfiles_assets') );
 			add_action( 'admin_enqueue_scripts', array($this, 'sendfiles_admin_assets') );
@@ -292,10 +301,18 @@ if(!class_exists('WP_SendFiles')) {
 				$insert =  $database->insertData($data);
 				echo "1";
 				die();
-		}
+			}
 
 			/*
-			* Actions perform for authentication
+			* Actions perform for gdrive authentication 
+			*/
+			function sendfiles_authenticate_gdrive_process() {
+
+				die();
+			}		
+
+			/*
+			* Actions perform for disconnect
 			*/
 			function sendfiles_disconnect_process() {
 				$database = new SendfilesDatabase();
