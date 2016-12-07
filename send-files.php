@@ -257,7 +257,7 @@ if(!class_exists('WP_SendFiles')) {
 
 				$link = $dbxClient->createTemporaryDirectLink($dropboxPath);
 				$dw_link = $link[0];
-				echo $dw_link;//return the uploaded file url
+				echo $dw_link.'?dl=1';//return the uploaded file url
 				die();
 			}
 
