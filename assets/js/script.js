@@ -32,7 +32,6 @@
 		  $droparea.removeClass('is-active');
 		});
 
-
 		// change inner text
 		$fileInput.on('change', function() {
 		  var filesCount = $(this)[0].files.length;
@@ -46,18 +45,13 @@
 		  autoUploadFiles();
 		});
 
-
-
-
-
-		/*
+	   /**
 		* file upload
 		*/
 		function autoUploadFiles(){
 
-			
 			var choose_title = $('.file-msg').data('choose-title');
-
+			$(".shortlink-wrapper").fadeOut();
 			var fd = new FormData();
 			var fd = new FormData();
 			var file = $(document).find('#sendfiles-files');
@@ -84,13 +78,6 @@
 					data: fd,
 					contentType: false,
 					processData: false,
-					// xhr: function() {
-					// 	myXhr = $.ajaxSettings.xhr();
-					// 	if(myXhr.upload){
-					// 		myXhr.upload.addEventListener('progress',progressHandlerFunction, false);
-					// 	}
-					// 	return myXhr;
-					// },
 					success: function(response){
 					    $(".file-msg").text(choose_title);
 					    $(".file-input").val('');
@@ -104,12 +91,11 @@
 						  $(".loader").css("visibility", "hidden");
 			        }
 				});
-
 			}
 		}
 	});
 
-	/*
+   /**
 	* select generated shortlink
 	*/
 	$(document).on('click','#shortlink',function () {

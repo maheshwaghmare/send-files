@@ -30,16 +30,15 @@
     display: block;
     padding: 10px;
     width: 100%;
-    border: none;
-}
-.sendfiles-settings-nav  a:focus{
-    box-shadow: none ;
+    margin: 1px 0;
 }
 .sendfiles-settings-nav .nav-tab{
 	border: none;
 }
 .sendfiles-settings-nav .nav-tab-active{
 	background: #ffffff;
+	-webkit-box-shadow: 0 0 0 1px rgba(91, 157, 217, 0.49),0 0 2px 1px rgba(30,140,190,.2);
+    box-shadow: 0 0 0 1px rgba(91, 157, 217, 0.49),0 0 2px 1px rgba(30,140,190,.2);
 }
 .welcome-panel select{
 	margin-top: -3px;
@@ -70,8 +69,8 @@
 	background: #f1f1f1;
 	padding: 10px 15px;
 }
-.expiry-number{
-	width: 50px;
+.form-field .expiry-number{
+	width: 60px !important;
 }
 span.green,
 span.success{
@@ -130,30 +129,42 @@ div.updated.notify{
 /*color picker*/
 .wp-sendfiles .wp-picker-container, .wp-picker-container:active{
 	position: absolute;
-	margin-top: -10px
 }
 .wp-sendfiles .wp-picker-container .iris-picker{
 	z-index: 99;
 }
-
-/*
-.loader {
-  position:absolute;
-  right: 10px;
-  border: 10px solid #fff;
-  border-radius: 50%;
-  border-top: 10px solid #3498db;
-  width: 20px;
-  height: 20px;
+.button-wrapper{
+	padding: 20px;
 }
 
-.file-border {
-    border: 2px dashed #007bb9;
-    width: 30px;
-    height: 30px;
-    position: absolute;
-    right: 10px;
-}*/
+.box-wrapper {
+    clear: both;
+    padding: 20px;
+}
+.box-wrapper .lable,
+.box-wrapper .form-field,
+.box-wrapper .field-demo{
+    float: none;
+}
+
+.border-demo{
+	width: 30px;
+	height: 30px;
+	border:2px dashed #007bb9;
+	margin: 0 auto;
+}
+.loader {
+  border: 5px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 5px solid #3498db;
+  width: 20px;
+  height: 20px;
+  margin: 0 auto;
+}
+.box-wrapper .field-demo {
+    text-align: center;
+}
+
 
 @media (min-width: 768px){
 
@@ -161,5 +172,24 @@ div.updated.notify{
 	    float: left;
 	    margin: 15px 2% 0 0;
 	    width: 19%;
+	}
+	.box-wrapper {
+	    clear: both;
+	    padding: 35px;
+	}
+	.box-wrapper .lable {
+	    width: 33.33%;
+	    float: left;
+	}
+
+	.box-wrapper .form-field {
+	    width: 33.33%;
+	    float: left;
+	}
+
+	.box-wrapper .field-demo {
+	    width: 30.33%;
+	    float: right;
+	    text-align: center;
 	}
 }

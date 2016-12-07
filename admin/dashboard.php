@@ -56,7 +56,7 @@
 
                 if ($results->user_id != null) : 
                     echo "<div class='account-info'><h1>". __( 'Dropbox Account Details', 'sendfiles')."<span class='dashicons dashicons-yes activate'></span><span class='green'>".__('Connected', 'sendfiles')."</span></h1>";
-                    echo '<p><b>'.__( 'Name:-', 'sendfiles').'<span class="green">'.$results->name.'</span><br>'.__( 'Email:-','sendfiles').'<span class="green"> '.$results->email.'</span></b></p></div>';
+                    echo '<p><b>'.__( 'Name:-', 'sendfiles').'<span class="green">'.$results->name.'</span></b></p></div>';
                     ?>
 
                 <div class="panel-content">
@@ -92,7 +92,7 @@
                                         <label><?php echo __( 'Token', 'sendfiles' ); ?></label>
                                     </td>
                                     <td>
-                                        <input type="text" id="auth-token" required  placeHolder="please enter the token"/>
+                                        <input type="text" id="auth-token" required  placeHolder="<?php _e( 'Please enter the token', 'sendfiles' ); ?>"/>
                                     </td>
                                 </tr>
                                 <tr>
