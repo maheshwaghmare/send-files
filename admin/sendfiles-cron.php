@@ -9,7 +9,7 @@ use Dropbox as dbx;
         wp_clear_scheduled_hook('sendfiles_cron_hook');   
     }
 
-    /*
+   /**
     *   create schedule for specific time
     */          
     
@@ -49,8 +49,7 @@ use Dropbox as dbx;
     }
 
 
-
-    /*
+   /**
     *   schedule event 
     */
 
@@ -59,7 +58,7 @@ use Dropbox as dbx;
     }
 
 
-    /*
+   /**
     *   create schedule for deleting file after specific time
     */
     function sendfiles_cron_exec() {
@@ -87,8 +86,8 @@ use Dropbox as dbx;
         }($settings['expiry_type']);
 
         $database = new SendfilesDatabase();
-        $results = $database->getData();
-        $files = $database->getFileData($results->user_id);
+        $values = (get_option( 'sendfiles-auth' )) ? get_option( 'sendfiles-auth' ) : array();
+        $files = $database->getFileData($values['user_id']);
 
         date_default_timezone_set("Asia/Kolkata");
         $curtime = date("Y-m-d H:i:s");
@@ -98,15 +97,15 @@ use Dropbox as dbx;
             // get the total time difference between current time and file uploaded time
             if((strtotime($curtime) - strtotime($file->date)) > $expiry) {
                 $clientIdentifier = "SendFiles/1.0";
-                $dbxClient = new dbx\Client($results->access_token, $clientIdentifier);
+                $dbxClient = new dbx\Client($values['access_token'], $clientIdentifier);
                 try {
                     $dbxClient->delete($file->file);
                 }
                 catch (dbx\Exception $ex) {
-                    echo "something went wrong, please try again</span>";
+                    _e('Something went wrong, please try again','send-files');
                 }
                 $data = array(
-                    "user_id" => $results->user_id,
+                    "user_id" => $values['user_id'],
                     "file" => $file->file
                 );
                 $database->deleteFiles($data);

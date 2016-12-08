@@ -58,6 +58,7 @@ jQuery(document).ready(function($){
         });
 
         function disconnectDropbox(result) {
+            $('.auth-message').empty();
             $('#ajaxloader').show();
                 $.ajax({
                     url : admin_sendfiles.admin_sendfiles_url,

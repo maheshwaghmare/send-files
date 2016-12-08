@@ -2,11 +2,11 @@
 /*
 Plugin Name: Send Files
 Plugin URI: https://www.brainstormforce.com
-Author: BrainStrom Force
+Author: Brainstorm Force
 Author URI: https://www.brainstormforce.com
 Description: Send Files is a simple plugin that connects with your Dropbox account. Once the plugin is installed and configured, you can create a beautiful page on your website where your users can upload files and share the link with you (or anyone else)
 Version: 0.0.1
-Text Domain: sendfiles
+Text Domain: send-files
 */
 
 if(!defined('SENDFILES_VERSION')) {
@@ -22,10 +22,6 @@ require_once(SENDFILES_PATH.'classes/Dropbox.class.php');
 require_once(SENDFILES_PATH.'classes/class.gdrive.php');
 require_once(SENDFILES_PATH.'classes/Database.class.php');
 include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
-
-
-session_start();
-
 ini_set('max_execution_time', 300);
 use \Dropbox as dbx;
 
@@ -66,8 +62,8 @@ if(!class_exists('WP_SendFiles')) {
 
 	        add_submenu_page(
 				'options-general.php',
-				__( 'Send Files', 'sendfiles' ),
-				__( 'Send Files', 'sendfiles' ),
+				__( 'Send Files', 'send-files' ),
+				__( 'Send Files', 'send-files' ),
 				'manage_options',
 				'wp-sendfiles',
 				array( $this, 'sendfiles_admin_page' )
@@ -118,10 +114,10 @@ if(!class_exists('WP_SendFiles')) {
 
 			// Localize the script with new data
 			$messages_array = array(
-				'copy_clipboard' => __('(Copied to clipboard)' ,'sendfiles'),
-				'copy_clipboard_fail' => __('(Copy to clipboard failed)' ,'sendfiles'),
-				'select_file'=>__('Please select a file to upload' , 'sendfiles'),
-				'error_message'=>__('Something went wrong please try again' , 'sendfiles'),
+				'copy_clipboard' => __('(Copied to clipboard)' ,'send-files'),
+				'copy_clipboard_fail' => __('(Copy to clipboard failed)' ,'send-files'),
+				'select_file'=>__('Please select a file to upload' , 'send-files'),
+				'error_message'=>__('Something went wrong please try again' , 'send-files'),
 			);
 			wp_localize_script( 'sendfiles-js', 'sendfiles', $messages_array );
 
@@ -148,11 +144,11 @@ if(!class_exists('WP_SendFiles')) {
 
 			// Localize the script with new data
 			$messages_array = array(
-				'add_token' => __('Please add the Token' ,'sendfiles'),
-				'token_expire'=>__('Token doesn\'t exist or has expired, please try to add valid token.' , 'sendfiles'),
-				'auth_success'=>__('Authentication is completed. Please Wait' , 'sendfiles'),
-				'disconnect_success'=>__('Successfully disconnected. Please Wait' , 'sendfiles'),
-				'error_message'=>__('Something went wrong please try again' , 'sendfiles'),
+				'add_token' => __('Please add the Token' ,'send-files'),
+				'token_expire'=>__('Token doesn\'t exist or has expired, please try to add valid token.' , 'send-files'),
+				'auth_success'=>__('Authentication is completed. Please Wait' , 'send-files'),
+				'disconnect_success'=>__('Successfully disconnected. Please Wait' , 'send-files'),
+				'error_message'=>__('Something went wrong please try again' , 'send-files'),
 				'admin_sendfiles_url' => admin_url( 'admin-ajax.php' )
 			);
 			wp_localize_script( 'admin-sendfiles-js', 'admin_sendfiles', $messages_array );
@@ -180,7 +176,7 @@ if(!class_exists('WP_SendFiles')) {
 			if (isset($settings['file_text']) && $settings['file_text'] !='') 
 				$file_text = $settings['file_text'];
 			else
-				$file_text = __( ' Drop file here or click to upload.', 'sendfiles' );
+				$file_text = __( ' Drop file here or click to upload.', 'send-files' );
 			if (isset($settings['upload_font_color'])) 
 				$upload_font_color = $settings['upload_font_color'];	
 			else
@@ -196,7 +192,7 @@ if(!class_exists('WP_SendFiles')) {
 			if (isset($settings['link_title']) && $settings['link_title'] !='') 
 				$link_title = $settings['link_title'];
 			else
-				$link_title = __( 'Share this link with anyone!', 'sendfiles');
+				$link_title = __( 'Share this link with anyone!', 'send-files');
 			if (isset($settings['loading_border_color'])) 
 				$loading_border_color = $settings['loading_border_color'];
 			else
@@ -242,11 +238,11 @@ if(!class_exists('WP_SendFiles')) {
 			* Actions perform to upload image to dropbox
 			*/
 			function sendfiles_process() {
-
+				$values = (get_option( 'sendfiles-auth' )) ? get_option( 'sendfiles-auth' ) : array(); 
 				$database = new SendfilesDatabase();
-				$results = $database->getData();
+				
 				$clientIdentifier = "SendFiles/1.0";
-				$dbxClient = new dbx\Client($results->access_token, $clientIdentifier);
+				$dbxClient = new dbx\Client($values['access_token'], $clientIdentifier);
 				$name = $_FILES["sendfiles-files"]["name"];
 				$f = fopen($_FILES["sendfiles-files"]["tmp_name"], "rb");
 				$result = $dbxClient->uploadFile("/".$name, dbx\WriteMode::add(), $f);
@@ -254,7 +250,7 @@ if(!class_exists('WP_SendFiles')) {
 				$file = $dbxClient->getMetadata('/'.$name);
 
 				// insert uploaded file and time into database
-				$data = array('user_id' => $results->user_id ,'filename'=> $result['path']);
+				$data = array('user_id' => $values['user_id'] ,'filename'=> $result['path']);
 				$database->insertFiles($data);
 
 				$dropboxPath = $file['path'];
@@ -266,7 +262,7 @@ if(!class_exists('WP_SendFiles')) {
 
 				$link = $dbxClient->createTemporaryDirectLink($dropboxPath);
 				$dw_link = $link[0];
-				echo $dw_link;//return the uploaded file url
+				echo $dw_link.'?dl=1';//return the uploaded file url
 				die();
 			}
 
@@ -286,19 +282,24 @@ if(!class_exists('WP_SendFiles')) {
 					echo '0';
 					die();
 				}
-
+				// get access token
 				$client = $dropbox->getClient($accessToken);
-			    $database = new SendfilesDatabase();
+			    $values['access_token'] = $accessToken;
+			    $values['user_id'] = $userId;
+			    $values['display_name'] = $client['display_name'];
+			    $deprecated = null;
+			    $autoload = 'no';
+    			$option_name = 'sendfiles-auth' ;
+				if ( get_option( $option_name ) !== false ) {
 
-	            $data = array(
-	            	"accessToken" => $accessToken,
-	            	 "userId" => $userId,
-	            	 "referral_link" => $client['referral_link'],
-	            	 "display_name" => $client['display_name'],
-	            	 "email_verified" =>$client['email_verified'],
-	            	 "email" => $client['email']
-	            	);
-				$insert =  $database->insertData($data);
+				    // The option already exists, so we just update it.
+				    update_option( $option_name, $values );
+
+				} else {
+
+				    add_option( $option_name, $values, $deprecated, $autoload );
+				}
+
 				echo "1";
 				die();
 			}
@@ -355,23 +356,14 @@ if(!class_exists('WP_SendFiles')) {
 			}		
 		}
 
-			/*
-			* Actions perform for disconnect
+		   /**
+			* Actions perform for disconnect from dropbox
 			*/
 			function sendfiles_disconnect_process() {
-				$database = new SendfilesDatabase();
-	            $data = array(
-	            	"accessToken" => null,
-	            	 "userId" => null,
-	            	 "referral_link" =>null,
-	            	 "display_name" => null,
-	            	 "email_verified" =>null,
-	            	 "email" => null
-	            	);
-				$insert =  $database->insertData($data);
+				delete_option( 'sendfiles-auth' );
 				echo "1";
 			}
-}
+	}
 
 	new WP_SendFiles();
 }
