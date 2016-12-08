@@ -24,7 +24,7 @@ require_once(SENDFILES_PATH.'classes/Database.class.php');
 include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
 
 
-
+session_start();
 
 ini_set('max_execution_time', 300);
 use \Dropbox as dbx;
@@ -308,8 +308,52 @@ if(!class_exists('WP_SendFiles')) {
 			*/
 			function sendfiles_authenticate_gdrive_process() {
 
+				
+		define('APPLICATION_NAME', 'Project Default Service Account');
+		define('CLIENT_SECRET_PATH', SENDFILES_PATH.'admin/client_secret.json');
+		define('SCOPES', implode(' ', array(
+		    Google_Service_Drive::DRIVE_METADATA)
+		));
+		$drive_client = new Google_Client();
+		// $drive_client->setHttpClient(new GuzzleHttp\Client(['verify' => false]));
+		$drive_client->setApplicationName(APPLICATION_NAME);
+		$drive_client->setScopes(SCOPES);
+		$drive_client->setAuthConfigFile(CLIENT_SECRET_PATH);
+		$drive_client->setAccessType('online');
+
+				// $drive_client = new Google_Client();
+				// // $drive_client->setHttpClient(new GuzzleHttp\Client(['verify' => false]));
+				// $drive_client->setAuthConfig(SENDFILES_PATH.'admin/client_secret.json');
+				// $drive_client->addScope(Google_Service_Drive::DRIVE_METADATA_READONLY);
+				// $drive_client->setAccessType('offline');
+				if (isset($_POST['gdrive_auth_code'])) {
+					  $drive_client->setAccessToken($_POST['gdrive_auth_code']);
+					  var_dump($drive_client);
+					  $drive_service = new Google_Service_Drive($drive_client);
+					  // var_dump($drive_service);
+					  
+					  // Print the names and IDs for up to 10 files.
+						$optParams = array(
+						  'maxResults' => 10,
+						);
+						$results = $drive_service->files->listFiles($optParams);
+						if (count($results->getItems()) == 0) {
+						  echo "No files are stored in your Google Drive.\n";
+						} else {
+						  
+						  echo "<br />Files:<br />";
+						  foreach ($results->getItems() as $file) {
+							echo "File ID => " . $file->getId() . " , Title => " . $file->getTitle() . '<br /><br />';
+						  }
+						}
+
+
+				// 	}
+
+
 				die();
 			}		
+		}
 
 			/*
 			* Actions perform for disconnect
