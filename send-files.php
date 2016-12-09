@@ -18,7 +18,6 @@ if(!defined('SENDFILES_PATH')) {
 
 require_once(SENDFILES_PATH.'dropbox/autoload.php');
 require_once(SENDFILES_PATH.'classes/Dropbox.class.php');
-require_once(SENDFILES_PATH.'classes/Database.class.php');
 include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
 ini_set('max_execution_time', 300);
 use \Dropbox as dbx;
@@ -28,9 +27,6 @@ if(!class_exists('WP_SendFiles')) {
 
 	  // Constructor
 	    function __construct() {
-
-	        register_activation_hook( __FILE__, array( $this, 'wpa_install' ) );
-	        register_deactivation_hook( __FILE__, array( $this, 'wpa_uninstall' ) );
 
 	        add_action( 'admin_menu', array( $this, 'init_admin_menu' ) );
 			add_shortcode( 'sendfiles', array($this, 'sendfilesShortcode') );
@@ -72,29 +68,6 @@ if(!class_exists('WP_SendFiles')) {
 
 	    	include_once SENDFILES_PATH.'admin/dashboard.php';
 	    	include_once SENDFILES_PATH.'admin/dashboard-options.php';
-
-	    }
-
-		/*
-		* Actions perform on activation of plugin
-		*/
-	    function wpa_install() {
-
-	    	// create table
-	    	 $database = new SendfilesDatabase();
-	    	 $database->createTable();
-
-
-	    }
-
-		/*
-		* Actions perform on de-activation of plugin
-		*/
-	    function wpa_uninstall() {
-
-	    	// drop table
-			$database = new SendfilesDatabase();
-			$database->dropTable();
 
 	    }
 
@@ -233,7 +206,6 @@ if(!class_exists('WP_SendFiles')) {
 			*/
 			function sendfiles_process() {
 				$values = (get_option( 'sendfiles-auth' )) ? get_option( 'sendfiles-auth' ) : array(); 
-				$database = new SendfilesDatabase();
 				
 				$clientIdentifier = "SendFiles/1.0";
 				$dbxClient = new dbx\Client($values['access_token'], $clientIdentifier);
@@ -243,11 +215,16 @@ if(!class_exists('WP_SendFiles')) {
 				fclose($f);
 				$file = $dbxClient->getMetadata('/'.$name);
 
-				// insert uploaded file and time into database
-				$data = array('user_id' => $values['user_id'] ,'filename'=> $result['path']);
-				$database->insertFiles($data);
+				$custom_post_sendfiles = array(
+				    'post_type' => 'sendfiles_list',
+				    'post_title' => $values['user_id'],
+				    'post_content' => $result['path'],
+				    'post_status' => 'publish'
+				);
+				// insert uploaded file to post table
+				wp_insert_post( $custom_post_sendfiles, true );
 
-				$dropboxPath = $file['path'];
+				$dropboxPath = $result['path'];
 				$pathError = dbx\Path::findError($dropboxPath);
 				if ($pathError !== null) {
 					fwrite(STDERR, "Invalid <dropbox-path>: $pathError\n");
@@ -259,6 +236,8 @@ if(!class_exists('WP_SendFiles')) {
 				echo $dw_link.'?dl=1';//return the uploaded file url
 				die();
 			}
+
+
 
 
 			/*
