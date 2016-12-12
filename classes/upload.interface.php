@@ -1,6 +1,6 @@
 <?php
 
-// Declare the interface 'iTemplate'
+// Declare the interface 'iUploadFile'
 interface iUploadFile
 {
     public function uploadFile();
