@@ -18,9 +18,9 @@ if(!defined('SENDFILES_PATH')) {
 
 require_once(SENDFILES_PATH.'dropbox/autoload.php');
 require_once(SENDFILES_PATH.'drive/autoload.php');
-require_once(SENDFILES_PATH.'classes/Dropbox.class.php');
-require_once(SENDFILES_PATH.'classes/class.gdrive.php');
-require_once(SENDFILES_PATH.'classes/Database.class.php');
+require_once(SENDFILES_PATH.'classes/upload.interface.php');
+require_once(SENDFILES_PATH.'classes/gdrive.class.php');
+require_once(SENDFILES_PATH.'classes/dropbox.class.php');
 include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
 ini_set('max_execution_time', 300);
 use \Dropbox as dbx;
@@ -32,9 +32,6 @@ if(!class_exists('WP_SendFiles')) {
 	  // Constructor
 	    function __construct() {
 
-	        register_activation_hook( __FILE__, array( $this, 'wpa_install' ) );
-	        register_deactivation_hook( __FILE__, array( $this, 'wpa_uninstall' ) );
-
 	        add_action( 'admin_menu', array( $this, 'init_admin_menu' ) );
 			add_shortcode( 'sendfiles', array($this, 'sendfilesShortcode') );
 
@@ -42,14 +39,10 @@ if(!class_exists('WP_SendFiles')) {
 			add_action( 'wp_ajax_nopriv_sendfiles', array($this, 'sendfiles_process') );
 
 			add_action( 'wp_ajax_sendfiles_authenticate', array($this, 'sendfiles_authenticate_process') );
-			add_action( 'wp_ajax_nopriv_sendfiles_authenticate', array($this, 'sendfiles_authenticate_process') );
 
 			// google drive authentication process
 			add_action( 'wp_ajax_sendfiles_authenticate_gdrive', array($this, 'sendfiles_authenticate_gdrive_process') );
-			add_action( 'wp_ajax_nopriv_sendfiles_authenticate_gdrive', array($this, 'sendfiles_authenticate_gdrive_process') );
-// 
 			add_action( 'wp_ajax_sendfiles_disconnect', array($this, 'sendfiles_disconnect_process') );
-			// add_action( 'wp_ajax_nopriv_sendfiles_disconnect', array($this, 'sendfiles_disconnect_process') );
 
 			add_action( 'wp_enqueue_scripts', array($this, 'sendfiles_assets') );
 			add_action( 'admin_enqueue_scripts', array($this, 'sendfiles_admin_assets') );
@@ -79,29 +72,6 @@ if(!class_exists('WP_SendFiles')) {
 
 	    	include_once SENDFILES_PATH.'admin/dashboard.php';
 	    	include_once SENDFILES_PATH.'admin/dashboard-options.php';
-
-	    }
-
-		/*
-		* Actions perform on activation of plugin
-		*/
-	    function wpa_install() {
-
-	    	// create table
-	    	 $database = new SendfilesDatabase();
-	    	 $database->createTable();
-
-
-	    }
-
-		/*
-		* Actions perform on de-activation of plugin
-		*/
-	    function wpa_uninstall() {
-
-	    	// drop table
-			$database = new SendfilesDatabase();
-			$database->dropTable();
 
 	    }
 
@@ -235,53 +205,22 @@ if(!class_exists('WP_SendFiles')) {
 
 		}
 
-			/*
-			* Actions perform to upload image to dropbox
+		   /**
+			* Actions perform to upload file to dropbox
 			*/
 			function sendfiles_process() {
-				$values = (get_option( 'sendfiles-auth' )) ? get_option( 'sendfiles-auth' ) : array(); 
-				$database = new SendfilesDatabase();
-				
-				$clientIdentifier = "SendFiles/1.0";
-				$dbxClient = new dbx\Client($values['access_token'], $clientIdentifier);
-				$name = $_FILES["sendfiles-files"]["name"];
-				$f = fopen($_FILES["sendfiles-files"]["tmp_name"], "rb");
-				$result = $dbxClient->uploadFile("/".$name, dbx\WriteMode::add(), $f);
-				fclose($f);
-				$file = $dbxClient->getMetadata('/'.$name);
 
-				// insert uploaded file and time into database
-				$data = array('user_id' => $values['user_id'] ,'filename'=> $result['path']);
-				// $database->insertFiles($data);
-				$custom_post_sendfiles = array(
-				    'post_type' => 'sendfiles_list',
-				    'post_title' => $values['user_id'],
-				    'post_content' => $result['path'],
-				    'post_status' => 'publish'
-				);
+				$dropbox = new Dropbox();
+				$dropbox->uploadFile();
 
-				$post_id = wp_insert_post( custom_post_sendfiles, true );
-
-
-
-				$dropboxPath = $result['path'];
-				$pathError = dbx\Path::findError($dropboxPath);
-				if ($pathError !== null) {
-					fwrite(STDERR, "Invalid <dropbox-path>: $pathError\n");
-					die;
-				}
-
-				$link = $dbxClient->createTemporaryDirectLink($dropboxPath);
-				$dw_link = $link[0];
-				echo $dw_link.'?dl=1';//return the uploaded file url
-				die();
 			}
 
 
-			/*
+		   /**
 			* Actions perform for authentication
 			*/
 			function sendfiles_authenticate_process() {
+
 				$dropbox = new Dropbox();
 		    	$webAuth = $dropbox->getWebAuth();
 
@@ -293,23 +232,11 @@ if(!class_exists('WP_SendFiles')) {
 					echo '0';
 					die();
 				}
-				// get access token
-				$client = $dropbox->getClient($accessToken);
-			    $values['access_token'] = $accessToken;
-			    $values['user_id'] = $userId;
-			    $values['display_name'] = $client['display_name'];
-			    $deprecated = null;
-			    $autoload = 'no';
-    			$option_name = 'sendfiles-auth' ;
-				if ( get_option( $option_name ) !== false ) {
+				// get account details 
+				$accountInfo = $dropbox->getAccountInfo($accessToken);
 
-				    // The option already exists, so we just update it.
-				    update_option( $option_name, $values );
-
-				} else {
-
-				    add_option( $option_name, $values, $deprecated, $autoload );
-				}
+				// set account details to database
+				$dropbox->setAccessTokenUserDetails($accessToken, $userId, $accountInfo['display_name']);
 
 				echo "1";
 				die();
@@ -320,56 +247,14 @@ if(!class_exists('WP_SendFiles')) {
 			*/
 			function sendfiles_authenticate_gdrive_process() {
 
-				
-		define('APPLICATION_NAME', 'Project Default Service Account');
-		define('CLIENT_SECRET_PATH', SENDFILES_PATH.'admin/client_secret.json');
-		define('SCOPES', implode(' ', array(
-		    Google_Service_Drive::DRIVE_METADATA)
-		));
-		$drive_client = new Google_Client();
-		$drive_client->setHttpClient(new GuzzleHttp\Client(['verify' => false]));
-		$drive_client->setApplicationName(APPLICATION_NAME);
-		$drive_client->setScopes(SCOPES);
-		$drive_client->setAuthConfig(CLIENT_SECRET_PATH);
-		$drive_client->setAccessType('offline');
-
 				if (isset($_POST['gdrive_auth_code'])) {
-					// Exchange authorization code for an access token.
-				    $accessToken = $drive_client->fetchAccessTokenWithAuthCode($_POST['gdrive_auth_code']);
-				    $drive_client->setAccessToken($accessToken);
-				    // Refresh the token if it's expired.
-				  // if ($client->isAccessTokenExpired()) {
-				  //   $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-				  //   $access_token = $client->getAccessToken();
-				  // }
 
-			    $values['access_token'] = $accessToken['access_token'];
-			    $deprecated = null;
-			    $autoload = 'no';
-    			$option_name = 'sendfiles-auth' ;
-				if ( get_option( $option_name ) !== false ) {
-
-				    // The option already exists, so we just update it.
-				    update_option( $option_name, $values );
-
-				} else {
-
-				    add_option( $option_name, $values, $deprecated, $autoload );
-				}
-				 echo $accessToken['access_token']; 
-				die();
-			}		
+					$g_drive = new GoogleDrive();
+		    		$token = $g_drive->setAccessToken($_POST['gdrive_auth_code']);
+		    		echo $token;
+		    		die();
+				}		
 		}
-
-
-		   /**
-			* Actions perform for gdrive authentication 
-			*/
-			function sendfiles_save_user_gdrive_process() {
-				if (isset($_POST['display_name'])) {
-					
-				}
-			}
 
 		   /**
 			* Actions perform for disconnect from dropbox
