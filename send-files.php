@@ -17,7 +17,8 @@ if(!defined('SENDFILES_PATH')) {
 }
 
 require_once(SENDFILES_PATH.'dropbox/autoload.php');
-require_once(SENDFILES_PATH.'classes/Dropbox.class.php');
+require_once(SENDFILES_PATH.'classes/upload.interface.php');
+require_once(SENDFILES_PATH.'classes/dropbox.class.php');
 include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
 ini_set('max_execution_time', 300);
 use \Dropbox as dbx;
@@ -35,10 +36,8 @@ if(!class_exists('WP_SendFiles')) {
 			add_action( 'wp_ajax_nopriv_sendfiles', array($this, 'sendfiles_process') );
 
 			add_action( 'wp_ajax_sendfiles_authenticate', array($this, 'sendfiles_authenticate_process') );
-			add_action( 'wp_ajax_nopriv_sendfiles_authenticate', array($this, 'sendfiles_authenticate_process') );
 
 			add_action( 'wp_ajax_sendfiles_disconnect', array($this, 'sendfiles_disconnect_process') );
-			add_action( 'wp_ajax_nopriv_sendfiles_disconnect', array($this, 'sendfiles_disconnect_process') );
 
 			add_action( 'wp_enqueue_scripts', array($this, 'sendfiles_assets') );
 			add_action( 'admin_enqueue_scripts', array($this, 'sendfiles_admin_assets') );
@@ -201,49 +200,22 @@ if(!class_exists('WP_SendFiles')) {
 
 		}
 
-			/*
-			* Actions perform to upload image to dropbox
+		   /**
+			* Actions perform to upload file to dropbox
 			*/
 			function sendfiles_process() {
-				$values = (get_option( 'sendfiles-auth' )) ? get_option( 'sendfiles-auth' ) : array(); 
-				
-				$clientIdentifier = "SendFiles/1.0";
-				$dbxClient = new dbx\Client($values['access_token'], $clientIdentifier);
-				$name = $_FILES["sendfiles-files"]["name"];
-				$f = fopen($_FILES["sendfiles-files"]["tmp_name"], "rb");
-				$result = $dbxClient->uploadFile("/".$name, dbx\WriteMode::add(), $f);
-				fclose($f);
-				$file = $dbxClient->getMetadata('/'.$name);
 
-				$custom_post_sendfiles = array(
-				    'post_type' => 'sendfiles_list',
-				    'post_title' => $values['user_id'],
-				    'post_content' => $result['path'],
-				    'post_status' => 'publish'
-				);
-				// insert uploaded file to post table
-				wp_insert_post( $custom_post_sendfiles, true );
+				$dropbox = new Dropbox();
+				$dropbox->uploadFile();
 
-				$dropboxPath = $result['path'];
-				$pathError = dbx\Path::findError($dropboxPath);
-				if ($pathError !== null) {
-					fwrite(STDERR, "Invalid <dropbox-path>: $pathError\n");
-					die;
-				}
-
-				$link = $dbxClient->createTemporaryDirectLink($dropboxPath);
-				$dw_link = $link[0];
-				echo $dw_link.'?dl=1';//return the uploaded file url
-				die();
 			}
 
 
-
-
-			/*
+		   /**
 			* Actions perform for authentication
 			*/
 			function sendfiles_authenticate_process() {
+
 				$dropbox = new Dropbox();
 		    	$webAuth = $dropbox->getWebAuth();
 
@@ -255,29 +227,17 @@ if(!class_exists('WP_SendFiles')) {
 					echo '0';
 					die();
 				}
-				// get access token
-				$client = $dropbox->getClient($accessToken);
-			    $values['access_token'] = $accessToken;
-			    $values['user_id'] = $userId;
-			    $values['display_name'] = $client['display_name'];
-			    $deprecated = null;
-			    $autoload = 'no';
-    			$option_name = 'sendfiles-auth' ;
-				if ( get_option( $option_name ) !== false ) {
+				// get account details 
+				$accountInfo = $dropbox->getAccountInfo($accessToken);
 
-				    // The option already exists, so we just update it.
-				    update_option( $option_name, $values );
-
-				} else {
-
-				    add_option( $option_name, $values, $deprecated, $autoload );
-				}
+				// set account details to database
+				$dropbox->setAccessTokenUserDetails($accessToken, $userId, $accountInfo['display_name']);
 
 				echo "1";
 				die();
 		}
 
-			/*
+		   /**
 			* Actions perform for disconnect from dropbox
 			*/
 			function sendfiles_disconnect_process() {
