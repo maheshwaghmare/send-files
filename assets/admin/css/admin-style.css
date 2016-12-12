@@ -144,7 +144,7 @@ div.updated.notify{
 
 
 /*color picker*/
-.wp-sendfiles .wp-picker-container, .wp-picker-container:active{
+.wp-sendfiles .wp-picker-container, .wp-sendfiles .wp-picker-container:active{
 	position: absolute;
 	margin-top: 5px;
 	margin-left: 3px;
