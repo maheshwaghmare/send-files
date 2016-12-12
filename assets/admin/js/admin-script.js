@@ -104,17 +104,19 @@ jQuery(document).ready(function($){
                     gdrive_auth_code : gdrive_auth_code
                 },
                 success : function( response ) {
-                    
-                    console.log(response);
-                    // if (response == 0) {
-                    //     $('.auth-message.error').text(admin_sendfiles.token_expire).fadeIn();
-                    //     $('#auth-token').val('');
-
-                    // }else{
-                    //     $('.auth-message.success').text(admin_sendfiles.auth_success).fadeIn();
-                    //     $('#auth-token').val('');
-                    //     setTimeout(function(){ window.location.reload(true);}, 500);
-                    // }
+                   
+                   // console.log(response) ;
+                    $.ajax({
+                        type: "get",
+                        url: "https://www.googleapis.com/drive/v3/about",
+                        data: {
+                            fields : 'user',
+                            access_token: response
+                        },
+                        success: function(data){
+                            console.log(data);
+                    }
+                });
                     $('#ajaxloader').hide();
                 },
                 error: function (textStatus, errorThrown) {

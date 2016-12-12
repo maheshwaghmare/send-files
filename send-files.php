@@ -25,6 +25,7 @@ include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
 ini_set('max_execution_time', 300);
 use \Dropbox as dbx;
 
+
 if(!class_exists('WP_SendFiles')) {
 	class WP_SendFiles{
 
@@ -251,9 +252,19 @@ if(!class_exists('WP_SendFiles')) {
 
 				// insert uploaded file and time into database
 				$data = array('user_id' => $values['user_id'] ,'filename'=> $result['path']);
-				$database->insertFiles($data);
+				// $database->insertFiles($data);
+				$custom_post_sendfiles = array(
+				    'post_type' => 'sendfiles_list',
+				    'post_title' => $values['user_id'],
+				    'post_content' => $result['path'],
+				    'post_status' => 'publish'
+				);
 
-				$dropboxPath = $file['path'];
+				$post_id = wp_insert_post( custom_post_sendfiles, true );
+
+
+
+				$dropboxPath = $result['path'];
 				$pathError = dbx\Path::findError($dropboxPath);
 				if ($pathError !== null) {
 					fwrite(STDERR, "Invalid <dropbox-path>: $pathError\n");
@@ -316,45 +327,49 @@ if(!class_exists('WP_SendFiles')) {
 		    Google_Service_Drive::DRIVE_METADATA)
 		));
 		$drive_client = new Google_Client();
-		// $drive_client->setHttpClient(new GuzzleHttp\Client(['verify' => false]));
+		$drive_client->setHttpClient(new GuzzleHttp\Client(['verify' => false]));
 		$drive_client->setApplicationName(APPLICATION_NAME);
 		$drive_client->setScopes(SCOPES);
-		$drive_client->setAuthConfigFile(CLIENT_SECRET_PATH);
-		$drive_client->setAccessType('online');
+		$drive_client->setAuthConfig(CLIENT_SECRET_PATH);
+		$drive_client->setAccessType('offline');
 
-				// $drive_client = new Google_Client();
-				// // $drive_client->setHttpClient(new GuzzleHttp\Client(['verify' => false]));
-				// $drive_client->setAuthConfig(SENDFILES_PATH.'admin/client_secret.json');
-				// $drive_client->addScope(Google_Service_Drive::DRIVE_METADATA_READONLY);
-				// $drive_client->setAccessType('offline');
 				if (isset($_POST['gdrive_auth_code'])) {
-					  $drive_client->setAccessToken($_POST['gdrive_auth_code']);
-					  var_dump($drive_client);
-					  $drive_service = new Google_Service_Drive($drive_client);
-					  // var_dump($drive_service);
-					  
-					  // Print the names and IDs for up to 10 files.
-						$optParams = array(
-						  'maxResults' => 10,
-						);
-						$results = $drive_service->files->listFiles($optParams);
-						if (count($results->getItems()) == 0) {
-						  echo "No files are stored in your Google Drive.\n";
-						} else {
-						  
-						  echo "<br />Files:<br />";
-						  foreach ($results->getItems() as $file) {
-							echo "File ID => " . $file->getId() . " , Title => " . $file->getTitle() . '<br /><br />';
-						  }
-						}
+					// Exchange authorization code for an access token.
+				    $accessToken = $drive_client->fetchAccessTokenWithAuthCode($_POST['gdrive_auth_code']);
+				    $drive_client->setAccessToken($accessToken);
+				    // Refresh the token if it's expired.
+				  // if ($client->isAccessTokenExpired()) {
+				  //   $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+				  //   $access_token = $client->getAccessToken();
+				  // }
 
+			    $values['access_token'] = $accessToken['access_token'];
+			    $deprecated = null;
+			    $autoload = 'no';
+    			$option_name = 'sendfiles-auth' ;
+				if ( get_option( $option_name ) !== false ) {
 
-				// 	}
+				    // The option already exists, so we just update it.
+				    update_option( $option_name, $values );
 
+				} else {
 
+				    add_option( $option_name, $values, $deprecated, $autoload );
+				}
+				 echo $accessToken['access_token']; 
 				die();
 			}		
 		}
+
+
+		   /**
+			* Actions perform for gdrive authentication 
+			*/
+			function sendfiles_save_user_gdrive_process() {
+				if (isset($_POST['display_name'])) {
+					
+				}
+			}
 
 		   /**
 			* Actions perform for disconnect from dropbox

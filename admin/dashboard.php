@@ -133,7 +133,7 @@
 
         <div class="welcome-panel">
                 <?php 
-                    echo "<div class='account-info'><h1>". __( 'Google Drive Account Details', 'sendfiles')."<span class='dashicons dashicons-yes activate'></span><span class='green'>".__('Connected', 'sendfiles')."</span></h1>";
+                    echo "<div class='account-info'><h1>". __( 'Google Drive Account Details', 'sendfiles')."<span class='dashicons dashicons-yes activate'></span><span class='green'>".__('Connected', 'sendfiles')."</span></h1></div>";
                     // ?>
                     <hr>
 
@@ -144,12 +144,12 @@ define('SCOPES', implode(' ', array(
     Google_Service_Drive::DRIVE_METADATA)
 ));
 $client = new Google_Client();
-// $client->setHttpClient(new GuzzleHttp\Client(['verify' => false]));
+$client->setHttpClient(new GuzzleHttp\Client(['verify' => false]));
 $client->setApplicationName(APPLICATION_NAME);
 $client->setScopes(SCOPES);
-$client->setAuthConfigFile(CLIENT_SECRET_PATH);
+$client->setAuthConfig(CLIENT_SECRET_PATH);
 // $client->setRedirectUri('https://localhost/wordpress/wp-admin/options-general.php?page=wp-sendfiles');
-$client->setAccessType('online');
+$client->setAccessType('offline');
 
         // echo '<a href='.$drive_authUrl.'> Click Here </a>';
         
