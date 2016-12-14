@@ -14,7 +14,7 @@
             
             <?php endif;
             
-            $settings = (get_option( 'wp-sendfiles-basic' )) ? get_option( 'wp-sendfiles-basic' ) : array(); 
+            $settings = get_option( 'wp-sendfiles-basic', array());
          if ($active_tab == 'general_options' ):?>
 
             <div class="welcome-panel">
@@ -28,7 +28,7 @@
                                 </div>
                                 
                                 <div class="form-field">
-                                    <input type="text" value="<?php echo (isset($settings['file_text'])) ? $settings['file_text'] : 'Drop file here or click to upload.'; ?>" name="sendfiles[file_text]"/>
+                                    <input type="text" value="<?php echo (isset($settings['file_text'])) ? sanitize_text_field($settings['file_text']) : 'Drop file here or click to upload.'; ?>" name="sendfiles[file_text]"/>
                                 </div>
                             </div>
                             <div class="box-wrapper">   
@@ -37,7 +37,7 @@
                                 </div>
                                 
                                 <div class="form-field">
-                                    <input type="text" value="<?php echo (isset($settings['upload_font_color'])) ? $settings['upload_font_color'] : ''; ?>" name="sendfiles[upload_font_color]" class="color-picker" />
+                                    <input type="text" value="<?php echo (isset($settings['upload_font_color'])) ? sanitize_text_field($settings['upload_font_color']) : ''; ?>" name="sendfiles[upload_font_color]" class="color-picker" />
                                 </div>
 
                                 <div class="field-demo">
@@ -50,7 +50,7 @@
                                 </div>
                                 
                                 <div class="form-field">
-                                    <input type="text" value="<?php echo (isset($settings['border_color'])) ? $settings['border_color'] : ''; ?>" name="sendfiles[border_color]" class="color-picker" data-alpha="true" />
+                                    <input type="text" value="<?php echo (isset($settings['border_color'])) ? sanitize_text_field($settings['border_color']) : ''; ?>" name="sendfiles[border_color]" class="color-picker" data-alpha="true" />
                                 </div>
 
                                 <div class="field-demo">
@@ -63,7 +63,7 @@
                                 </div>
                                 
                                 <div class="form-field">
-                                    <input type="text" value="<?php echo (isset($settings['loading_border_color'])) ? $settings['loading_border_color'] : ''; ?>" name="sendfiles[loading_border_color]" class="color-picker" data-alpha="true" />
+                                    <input type="text" value="<?php echo (isset($settings['loading_border_color'])) ? sanitize_text_field($settings['loading_border_color']) : ''; ?>" name="sendfiles[loading_border_color]" class="color-picker" data-alpha="true" />
                                 </div>
 
                                 <div class="field-demo">
@@ -76,7 +76,7 @@
                                 </div>
                                 
                                 <div class="form-field">
-                                    <input type="text" value="<?php echo (isset($settings['loading_bg_color'])) ? $settings['loading_bg_color'] : ''; ?>" name="sendfiles[loading_bg_color]" class="color-picker" data-alpha="true" />
+                                    <input type="text" value="<?php echo (isset($settings['loading_bg_color'])) ? sanitize_text_field($settings['loading_bg_color']) : ''; ?>" name="sendfiles[loading_bg_color]" class="color-picker" data-alpha="true" />
                                 </div>
 
                                 <div class="field-demo">
@@ -89,7 +89,7 @@
                                 </div>
                                 
                                 <div class="form-field">
-                                    <input type="text" value="<?php echo (isset($settings['link_title'])) ? $settings['link_title'] : 'Share this link with anyone!'; ?>" name="sendfiles[link_title]"  />
+                                    <input type="text" value="<?php echo (isset($settings['link_title'])) ? sanitize_text_field($settings['link_title']) : 'Share this link with anyone!'; ?>" name="sendfiles[link_title]"  />
                                 </div>
                             </div>
 
@@ -99,7 +99,7 @@
                                 </div>
                                 
                                 <div class="form-field">
-                                    <input type="text" value="<?php echo (isset($settings['link_title_color'])) ? $settings['link_title_color'] : ''; ?>" name="sendfiles[link_title_color]" class="color-picker" />
+                                    <input type="text" value="<?php echo (isset($settings['link_title_color'])) ? sanitize_text_field($settings['link_title_color']) : ''; ?>" name="sendfiles[link_title_color]" class="color-picker" />
                                 </div>
                             </div>
                             <div class="box-wrapper">   
@@ -108,7 +108,7 @@
                                 </div>
                                 
                                 <div class="form-field">
-                                    <input type="text" value="<?php echo (isset($settings['link_bg_color'])) ? $settings['link_bg_color'] : ''; ?>" name="sendfiles[link_bg_color]" class="color-picker" data-alpha="true" />
+                                    <input type="text" value="<?php echo (isset($settings['link_bg_color'])) ? sanitize_text_field($settings['link_bg_color']) : ''; ?>" name="sendfiles[link_bg_color]" class="color-picker" data-alpha="true" />
                                 </div>
 
                                 <div class="field-demo">
@@ -125,7 +125,7 @@
                                 </div>
                                 
                                 <div class="form-field">
-                                    <input type="number" value="<?php echo (isset($settings['expiry_number'])) ? $settings['expiry_number'] : ''; ?>" name="sendfiles[expiry_number]" class="expiry-number" min=".1" step="any" size="3"/>
+                                    <input type="number" value="<?php echo (isset($settings['expiry_number'])) ? sanitize_text_field($settings['expiry_number']) : ''; ?>" name="sendfiles[expiry_number]" class="expiry-number" min=".1" step="any" size="3"/>
                                     <?php 
                                     if (!isset($settings['expiry_type'])) {
                                         $settings['expiry_type'] = 0;

@@ -129,7 +129,7 @@ if(!class_exists('WP_SendFiles')) {
 		function sendfilesShortcode( $attr, $content ) {
 
 			// get field value of general options
-			$settings = (get_option( 'wp-sendfiles-basic' )) ? get_option( 'wp-sendfiles-basic' ) : array();
+			$settings = get_option( 'wp-sendfiles-basic' , array());
 			if (isset($settings['border_color']) && $settings['border_color'] !='') 
 			    $border_color = $settings['border_color'];
 			else

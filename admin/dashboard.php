@@ -50,12 +50,12 @@
                 $settings = (isset($_POST['sendfiles'])) ? $_POST['sendfiles'] : array();
                 $is_update = update_option( 'wpsendfiles', $settings );
             }
-            $settings = (get_option( 'wpsendfiles' )) ? get_option( 'wpsendfiles' ) : array(); 
+            $settings = get_option( 'wpsendfiles' , array()); 
         ?>
 
         <div class="welcome-panel">
                 <?php 
-                $values = (get_option( 'sendfiles-auth' )) ? get_option( 'sendfiles-auth' ) : array(); 
+                $values = get_option( 'sendfiles-auth' , array()); 
                 if (isset($values['display_name'])) : 
                     echo "<div class='account-info'><h1>". __( 'Dropbox Account Details', 'send-files')."<span class='dashicons dashicons-yes activate'></span><span class='green'>".__('Connected', 'send-files')."</span></h1>";
                     echo '<p><b>'.__( 'Name:-', 'send-files').'<span class="green">'.$values['display_name'].'</span></b></p></div>';
@@ -79,9 +79,8 @@
                     echo '<p><b>'.__( 'Step 1.</b> Please click the [Connect With Dropbox] button below and get the Token from pop up window.', 'send-files').'</p>';
                     $dropbox = new Dropbox();
                     $dropboxAuthUrl = $dropbox->getAuthUrl();
-                    echo '<a class="button-primary connect-btn" target="_blank" href='.$dropboxAuthUrl.'>'.__( 'Connect With Dropbox', 'send-files').'</a>';
+                    echo '<a class="button-primary connect-btn" target="_blank" href='.$dropboxAuthUrl.'>'.__( 'Connect With Dropbox', 'send-files').'</a><br>';
                 endif; ?>
-                    <br>
                     <br>
                         <div class="token-wrapper">
                             <p><b><?php _e( 'Step 2.', 'send-files');?></b> 

@@ -18,7 +18,7 @@ use Dropbox as dbx;
                 $settings = (isset($_POST['sendfiles'])) ? $_POST['sendfiles'] : array();
                  update_option( 'wp-sendfiles-basic', $settings );
             }
-            $settings = (get_option( 'wp-sendfiles-basic' )) ? get_option( 'wp-sendfiles-basic' ) : array();
+            $settings = get_option( 'wp-sendfiles-basic', array());
             if (!isset($settings['expiry_type'])) {
                 $settings['expiry_type'] ='';
             }
@@ -63,7 +63,7 @@ use Dropbox as dbx;
     */
     function sendfiles_cron_exec() {
 
-        $settings = (get_option( 'wp-sendfiles-basic' )) ? get_option( 'wp-sendfiles-basic' ) : array(); 
+        $settings = get_option( 'wp-sendfiles-basic' , array()); 
         if (!isset($settings['expiry_type'])) {
                 $settings['expiry_type'] ='';
             }
@@ -85,7 +85,7 @@ use Dropbox as dbx;
                 break;
         }($settings['expiry_type']);
 
-        $values = (get_option( 'sendfiles-auth' )) ? get_option( 'sendfiles-auth' ) : array();
+        $values = get_option( 'sendfiles-auth', array());
         $user_id = $values['user_id'];
         $curtime = date("Y-m-d H:i:s");
 
