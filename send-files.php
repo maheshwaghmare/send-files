@@ -20,7 +20,6 @@ require_once(SENDFILES_PATH.'dropbox/autoload.php');
 require_once(SENDFILES_PATH.'classes/upload.interface.php');
 require_once(SENDFILES_PATH.'classes/dropbox.class.php');
 include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
-ini_set('max_execution_time', 300);
 use \Dropbox as dbx;
 
 if(!class_exists('WP_SendFiles')) {

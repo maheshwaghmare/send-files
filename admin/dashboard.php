@@ -13,10 +13,16 @@
          <!-- tabs -->
          <div class="sendfiles-settings-nav">
             <h2 class="nav-tab-wrapper">
-                <a href="?page=wp-sendfiles&tab=welcome" class="nav-tab <?php echo $active_tab == 'welcome' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'send-files');?></a>
-                <a href="?page=wp-sendfiles&tab=dropbox_options" class="nav-tab <?php echo $active_tab == 'dropbox_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Dropbox Options', 'send-files');?></a>
-                <a href="?page=wp-sendfiles&tab=general_options" class="nav-tab <?php echo $active_tab == 'general_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'General Options', 'send-files');?></a>
-                <a href="?page=wp-sendfiles&tab=how_it_works" class="nav-tab <?php echo $active_tab == 'how_it_works' ? 'nav-tab-active' : ''; ?>"><?php _e( 'How It Works?', 'send-files');?></a>
+                        <?php if ( is_network_admin() ) {
+                            $url =  network_admin_url( 'options-general.php?page=wp-sendfiles');
+                        }
+                        else {
+                            $url = admin_url( 'options-general.php?page=wp-sendfiles');
+                        }?>
+                <a href="<?php echo $url.'&tab=welcome' ?>" class="nav-tab <?php echo $active_tab == 'welcome' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'send-files');?></a>
+                <a href="<?php echo $url.'&tab=dropbox_options' ?>" class="nav-tab <?php echo $active_tab == 'dropbox_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Dropbox Options', 'send-files');?></a>
+                <a href="<?php echo $url.'&tab=general_options' ?>" class="nav-tab <?php echo $active_tab == 'general_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'General Options', 'send-files');?></a>
+                <a href="<?php echo $url.'&tab=how_it_works' ?>" class="nav-tab <?php echo $active_tab == 'how_it_works' ? 'nav-tab-active' : ''; ?>"><?php _e( 'How It Works?', 'send-files');?></a>
             </h2>
          </div>
 
@@ -28,7 +34,7 @@
                 <p><?php _e( 'Thank you for choosing sendfiles', 'send-files');?></p>
                 <p><?php _e( 'The easiest way to share files using Dropbox.', 'send-files');?>
                    <?php _e( 'It will allow you upload large files on your Dropbox account and will return sharable public URL.', 'send-files');?></p>
-                <h3><?php _e( 'Getting Started -', 'send-files');?> <a href="?page=wp-sendfiles&tab=dropbox_options"><?php _e( 'Connect with your Dropbox Account.', 'send-files');?></a></h3>
+                <h3><?php _e( 'Getting Started -', 'send-files');?> <a href="<?php echo $url.'&tab=dropbox_options' ?>"><?php _e( 'Connect with your Dropbox Account.', 'send-files');?></a></h3>
             </div>
 
         <?php endif;?>

@@ -114,6 +114,7 @@ class Dropbox implements iUploadFile{
 
 	public function uploadFile()
 	{
+		ini_set('max_execution_time', 300);
 		$values = (get_option( 'sendfiles-auth' )) ? get_option( 'sendfiles-auth' ) : array(); 
 		$dbxClient = self::getClient($values['access_token']);
 		$name = $_FILES["sendfiles-files"]["name"];

@@ -85,28 +85,37 @@ use Dropbox as dbx;
                 break;
         }($settings['expiry_type']);
 
-        global $wpdb;
         $values = (get_option( 'sendfiles-auth' )) ? get_option( 'sendfiles-auth' ) : array();
         $user_id = $values['user_id'];
         $curtime = date("Y-m-d H:i:s");
-        // get files list to perform the delete operation from server and database also
-        $files =   $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_title = '%s'", $user_id ));
-        
-        foreach ($files as $file) {
 
-            // get the total time difference between current time and file uploaded time
-            if((strtotime($curtime) - strtotime($file->post_date_gmt)) > $expiry) {
-                $clientIdentifier = "SendFiles/1.0";
-                $dbxClient = new dbx\Client($values['access_token'], $clientIdentifier);
-                try {
-                    // delete file from server
-                    $dbxClient->delete($file->post_content);
-                }
-                catch (dbx\Exception $ex) {
-                    _e('Something went wrong, please try again','send-files');
-                }
-                // delete the post from post table also
-                wp_delete_post($file->ID);
-            }
-        }
-    }
+        $args = array(
+            'post_type' => 'sendfiles_list', 
+            's'          => $user_id
+                );        
+             // get files list to perform the delete operation from server and database also
+            $sendfiles_post = new WP_Query($args);
+            if($sendfiles_post->have_posts()) :  while($sendfiles_post->have_posts()) : $sendfiles_post->the_post();
+ 
+                         $post_time =  get_the_date('Y-m-d H:i:s');
+                        // get the total time difference between current time and file uploaded time
+                        if((strtotime($curtime) - strtotime($post_time)) > 10) {
+                            $clientIdentifier = "SendFiles/1.0";
+                            $dbxClient = new dbx\Client($values['access_token'], $clientIdentifier);
+                            try {
+                                // delete file from server
+                                $dbxClient->delete(get_the_content());
+                            }
+                            catch (dbx\Exception $ex) {
+                                _e('Something went wrong, please try again','send-files');
+                            }
+                            // delete the post from post table also
+                            wp_delete_post(get_the_id());
+                        // }
+                    }
+
+                  endwhile;
+               else: 
+                    //no files to delete
+    endif;
+}
