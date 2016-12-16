@@ -109,12 +109,12 @@ if(!class_exists('WP_SendFiles')) {
 
 			// Localize the script with new data
 			$messages_array = array(
-				'add_token' => __('Please add the Token' ,'send-files'),
-				'token_expire'=>__('Token doesn\'t exist or has expired, please try to add valid token.' , 'send-files'),
-				'auth_success'=>__('Authentication is completed. Please Wait' , 'send-files'),
-				'disconnect_success'=>__('Successfully disconnected. Please Wait' , 'send-files'),
-				'error_message'=>__('Something went wrong please try again' , 'send-files'),
-				'admin_sendfiles_url' => admin_url( 'admin-ajax.php' )
+				'add_token' 			=> __('Please add the Token' ,'send-files'),
+				'token_expire'			=>__('Token doesn\'t exist or has expired, please try to add valid token.' , 'send-files'),
+				'auth_success'			=>__('Authentication is completed. Please Wait' , 'send-files'),
+				'disconnect_success'	=>__('Successfully disconnected. Please Wait' , 'send-files'),
+				'error_message'			=>__('Something went wrong please try again' , 'send-files'),
+				'admin_sendfiles_url' 	=> admin_url( 'admin-ajax.php' )
 			);
 			wp_localize_script( 'admin-sendfiles-js', 'admin_sendfiles', $messages_array );
 			wp_enqueue_script( 'admin-sendfiles-js' );
