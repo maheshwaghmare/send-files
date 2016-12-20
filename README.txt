@@ -1,8 +1,12 @@
 === Send Files ===
-Contributors: Brainstorm Force
-Author URI: https://www.brainstormforce.com/
-Plugin URI: https://www.brainstormforce.com/
+Contributors: brainstormforce, rushijagani
+Donate link: https://www.brainstormforce.com/payment/
+Requires at least: 4.4
 Tags: send files, share files
+Stable tag: 1.0.0
+Tested up to: 4.7
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 The easiest way to share files using Dropbox. It will allow you upload large files on your Dropbox account and will return sharable public URL.
 
@@ -20,6 +24,13 @@ Add the shortcode `[sendfiles]` to a page or post where you want to display file
 3. Select `sendfiles.zip` from your computer
 4. Click 'Install Now'
 5. Activate the plugin in the Plugin dashboard
+
+
+
+== Changelog==
+
+1.0.0
+Initial release
 
 
 == Settings ==

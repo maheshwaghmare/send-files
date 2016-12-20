@@ -13,12 +13,8 @@
          <!-- tabs -->
          <div class="sendfiles-settings-nav">
             <h2 class="nav-tab-wrapper">
-                        <?php if ( is_network_admin() ) {
-                            $url =  network_admin_url( 'options-general.php?page=wp-sendfiles');
-                        }
-                        else {
-                            $url = admin_url( 'options-general.php?page=wp-sendfiles');
-                        }?>
+                        <?php $url = admin_url( 'options-general.php?page=wp-sendfiles'); ?>
+                        
                 <a href="<?php echo $url.'&tab=welcome' ?>" class="nav-tab <?php echo $active_tab == 'welcome' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'send-files');?></a>
                 <a href="<?php echo $url.'&tab=dropbox_options' ?>" class="nav-tab <?php echo $active_tab == 'dropbox_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Dropbox Options', 'send-files');?></a>
                 <a href="<?php echo $url.'&tab=general_options' ?>" class="nav-tab <?php echo $active_tab == 'general_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'General Options', 'send-files');?></a>

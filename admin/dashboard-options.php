@@ -154,12 +154,8 @@
             <div class="welcome-panel">
                 <h1><?php _e( 'How it works?', 'send-files');?></h1>      
                 <p>
-                    <?php if ( is_network_admin() ) {
-                            $url =  network_admin_url( 'options-general.php?page=wp-sendfiles');
-                        }
-                        else {
-                            $url = admin_url( 'options-general.php?page=wp-sendfiles');
-                        }?>
+                    <?php $url = admin_url( 'options-general.php?page=wp-sendfiles'); ?>
+                    
                     <?php _e( '1.', 'send-files'); ?> <a href="<?php echo $url.'&tab=dropbox_options' ?>"><?php _e( 'Connect with your Dropbox account.', 'send-files');?></a>
                 </p>
                 <p>
