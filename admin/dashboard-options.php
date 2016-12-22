@@ -1,6 +1,6 @@
 <!-- Basic Options Tabs -->
 
-        <?php $active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'display_options'; 
+        <?php $active_tab = isset( $_GET[ 'tab' ] ) ? sanitize_text_field($_GET[ 'tab' ]) : 'display_options'; 
             $is_update = false;
 
             if(isset($_POST['wp-sendfiles-basic'])) :
@@ -151,7 +151,7 @@
         <?php endif; ?>
 
     <!-- how it works options tab -->
-        <?php $active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'display_options'; 
+        <?php $active_tab = isset( $_GET[ 'tab' ] ) ? sanitize_text_field($_GET[ 'tab' ]) : 'display_options'; 
          if ($active_tab == 'how_it_works' ):
          ?>
             <div class="welcome-panel">
