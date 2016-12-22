@@ -99,7 +99,7 @@ use Dropbox as dbx;
  
                          $post_time =  get_the_date('Y-m-d H:i:s');
                         // get the total time difference between current time and file uploaded time
-                        if((strtotime($curtime) - strtotime($post_time)) > 10) {
+                        if((strtotime($curtime) - strtotime($post_time)) > $expiry) {
                             $clientIdentifier = "SendFiles/1.0";
                             $dbxClient = new dbx\Client($values['access_token'], $clientIdentifier);
                             try {
