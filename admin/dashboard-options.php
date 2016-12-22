@@ -168,18 +168,4 @@
                    <?php _e( ' 4. To set files expiry go to', 'send-files'); ?> <a href="<?php echo $url.'&tab=general_options' ?>"><?php _e( 'General Options','send-files') ?></a> --> <?php _e( 'Uploaded files expiry','send-files') ?>
                 </p>
             </div>
-        <?php endif; ?>     
-
-
-        <!-- how it works options tab -->
-        
-        <?php $active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : ''; 
-         if ($active_tab != 'welcome'  &&
-             $active_tab != 'dropbox_options' &&
-             $active_tab != 'general_options' &&
-             $active_tab != 'how_it_works' ):
-         ?>
-            <div class="welcome-panel">
-                <h1><?php _e( 'Please select any option from side panel !', 'send-files');?></h1>      
-            </div>
-        <?php endif; ?>     
+        <?php endif; ?>
