@@ -5,7 +5,7 @@
 
             if(isset($_POST['wp-sendfiles-basic'])) :
 
-                $settings = (isset($_POST['sendfiles'])) ? $_POST['sendfiles'] : array();
+                $settings = (isset($_POST['sendfiles'])) ?  sanitize_text_field($_POST['sendfiles']) : array();
                 $is_update = update_option( 'wp-sendfiles-basic', $settings );?>
 
                 <div class="updated success notify">
@@ -167,5 +167,19 @@
                 <p>
                    <?php _e( ' 4. To set files expiry go to', 'send-files'); ?> <a href="<?php echo $url.'&tab=general_options' ?>"><?php _e( 'General Options','send-files') ?></a> --> <?php _e( 'Uploaded files expiry','send-files') ?>
                 </p>
+            </div>
+        <?php endif; ?>     
+
+
+        <!-- how it works options tab -->
+        
+        <?php $active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : ''; 
+         if ($active_tab != 'welcome'  &&
+             $active_tab != 'dropbox_options' &&
+             $active_tab != 'general_options' &&
+             $active_tab != 'how_it_works' ):
+         ?>
+            <div class="welcome-panel">
+                <h1><?php _e( 'Please select any option from side panel !', 'send-files');?></h1>      
             </div>
         <?php endif; ?>     

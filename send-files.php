@@ -220,7 +220,7 @@ if(!class_exists('WP_SendFiles')) {
 
 				try {
 		            // get access token and user id
-		            list($accessToken, $userId) = $webAuth->finish($_POST['auth_code']);
+		            list($accessToken, $userId) = $webAuth->finish( sanitize_text_field($_POST['auth_code']));
 		        }
 				catch (dbx\Exception $ex) {
 					echo '0';

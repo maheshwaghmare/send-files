@@ -43,7 +43,8 @@
         <?php
             $is_update = false;
             if(isset($_POST['wp-sendfiles-button'])) {
-                $settings = (isset($_POST['sendfiles'])) ? $_POST['sendfiles'] : array();
+
+                $settings = (isset($_POST['sendfiles'])) ? sanitize_text_field( $_POST['sendfiles'] ) : array();
                 $is_update = update_option( 'wpsendfiles', $settings );
             }
             $settings = get_option( 'wpsendfiles' , array()); 
