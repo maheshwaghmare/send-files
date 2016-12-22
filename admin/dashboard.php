@@ -53,43 +53,84 @@
         <div class="welcome-panel">
                 <?php 
                 $values = get_option( 'sendfiles-auth' , array()); 
-                if (isset($values['display_name'])) : 
-                    echo "<div class='account-info'><h1>". __( 'Dropbox Account Details', 'send-files')."<span class='dashicons dashicons-yes activate'></span><span class='green'>".__('Connected', 'send-files')."</span></h1>";
-                    echo '<p><b>'.__( 'Name:-', 'send-files').'<span class="green">'.$values['display_name'].'</span></b></p></div>';
-                    ?>
+                if (isset($values['display_name'])) : ?>
+                    <div class='account-info'>
+                        <h1>
+                            <?php _e( 'Dropbox Account Details', 'send-files') ?>
+                            <span class='dashicons dashicons-yes activate'></span>
+                            <span class='green'>
+                                <?php _e('Connected', 'send-files') ?>
+                            </span>
+                        </h1>
+                        <p>
+                            <b><?php _e( 'Name:-', 'send-files') ?>
+                                <span class="green">
+                                     <?php echo $values['display_name']; ?>
+                                 </span>
+                            </b>
+                        </p>
+                    </div>
 
-                <div class="panel-content">
-                    <div class="cart">
-                        <?php
-                        echo '<p><b>'.__( 'Step 1.', 'send-files').'</b>'.__( 'Please click below button to connect with another dropbox account and get the Token from pop up window.', 'send-files').'</p>';
+                    <div class="panel-content">
+                        <div class="cart">
+                            <p>
+                                <b><?php _e( 'Step 1.', 'send-files') ?></b> <!-- Instruction step 1 -->
 
-                        $dropbox = new Dropbox();
-                        $dropboxAuthUrl = $dropbox->getAuthUrl();
-
-                        echo '<a class="button-primary connect-btn" target="_blank" href='.$dropboxAuthUrl.'>'.__( 'Reconnect With Dropbox', 'send-files').'</a>';
-                        echo '<a class="button-secondary disconnect-btn" >'.__( 'Disconnect With Dropbox', 'send-files').'</a><br>';
-
-                else :
-                    echo "<div class='account-info'><h1>". __( 'Dropbox Account Details', 'send-files')."<span class='dashicons dashicons-no not-activate'></span><span class='red'>".__('Not Connected', 'send-files')."</span></h1></div>";
-                    echo "<div class='panel-content'>";
-                    echo '<h3>'.__( ' In order to use Send Files you will need to connect with your Dropbox account.', 'send-files').'</h3><br>';
-                    echo '<p><b>'.__( 'Step 1.</b> Please click the [Connect With Dropbox] button below and get the Token from pop up window.', 'send-files').'</p>';
-                    $dropbox = new Dropbox();
-                    $dropboxAuthUrl = $dropbox->getAuthUrl();
-                    echo '<a class="button-primary connect-btn" target="_blank" href='.$dropboxAuthUrl.'>'.__( 'Connect With Dropbox', 'send-files').'</a><br>';
-                endif; ?>
-                    <br>
-                        <div class="token-wrapper">
-                            <p><b><?php _e( 'Step 2.', 'send-files');?></b> 
-                                <?php _e( 'Add Token and save settings', 'send-files');?>
+                                <?php _e( 'Please click below button to connect with another dropbox account and get the Token from pop up window.', 'send-files'); ?>
                             </p>
 
+                            <?php
+                            $dropbox = new Dropbox();
+                            $dropboxAuthUrl = $dropbox->getAuthUrl();?>
+
+                            <a class="button-primary connect-btn" target="_blank" href="<?php echo $dropboxAuthUrl; ?>" >
+                                <?php _e( 'Reconnect With Dropbox', 'send-files') ?>
+                            </a>
+                            <a class="button-secondary disconnect-btn" >
+                                <?php _e( 'Disconnect With Dropbox', 'send-files') ?>
+                            </a>
+                        <br>
+
+                <?php else : ?>
+                    <div class='account-info'>
+                        <h1>
+                            <?php  _e( 'Dropbox Account Details', 'send-files') ?>
+                            <span class='dashicons dashicons-no not-activate'></span>
+                            <span class='red'>
+                                <?php _e('Not Connected', 'send-files') ?>
+                            </span>
+                        </h1>
+                    </div>
+
+                    <div class='panel-content'>
+                    <h3>
+                        <?php _e( ' In order to use Send Files you will need to connect with your Dropbox account.', 'send-files') ?>
+                    </h3>
+                    <br>
+                        <p>
+                            <b><?php _e( 'Step 1.</b> Please click the [Connect With Dropbox] button below and get the Token from pop up window.', 'send-files') ?></b>
+                        </p>
+
+                    <?php $dropbox = new Dropbox();
+                    $dropboxAuthUrl = $dropbox->getAuthUrl();?>
+                    <a class="button-primary connect-btn" target="_blank" href="<?php echo $dropboxAuthUrl; ?>">
+                        <?php _e( 'Connect With Dropbox', 'send-files') ?>
+                    </a><br>
+
+                <?php endif; ?>
+                    <br>
+                        <div class="token-wrapper">
+                            <p>
+                                <b> <?php _e( 'Step 2.', 'send-files');?></b> <!-- Instruction step 2 -->
+
+                                <?php _e( 'Add Token and save settings', 'send-files'); ?>
+                            </p>
 
                         <form method="post" class="token-form" name="token-form">
                             <table id="createuser" class="form-table">
                                 <tr class="form-field">
                                     <td>
-                                        <label><?php echo __( 'Token', 'send-files' ); ?></label>
+                                        <label><?php  _e( 'Token', 'send-files' ); ?></label>
                                     </td>
                                     <td>
                                         <input type="text" id="auth-token" required  placeHolder="<?php _e( 'Please enter the token', 'send-files' ); ?>"/>
