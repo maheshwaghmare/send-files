@@ -156,7 +156,7 @@
                 <p>
                     <?php $url = admin_url( 'options-general.php?page=wp-sendfiles'); ?>
                     
-                    <?php _e( '1.', 'send-files'); ?> <a href="<?php echo $url.'&tab=dropbox_options' ?>"><?php _e( 'Connect with your Dropbox account.', 'send-files');?></a>
+                    <?php _e( '1.', 'send-files'); ?> <a href="<?php echo esc_url($url).'&tab=dropbox_options' ?>"><?php _e( 'Connect with your Dropbox account.', 'send-files');?></a>
                 </p>
                 <p>
                     <?php _e( '2. Use','send-files')?>  [sendfiles] <?php _e( 'shortcode anywhere in Page/Post to enable the file uploader.', 'send-files');?>
@@ -165,7 +165,7 @@
                    <?php _e( ' 3. It will allow you upload large files on your Dropbox account and will return sharable public URL.', 'send-files');?>
                 </p>
                 <p>
-                   <?php _e( ' 4. To set files expiry go to', 'send-files'); ?> <a href="<?php echo $url.'&tab=general_options' ?>"><?php _e( 'General Options','send-files') ?></a> --> <?php _e( 'Uploaded files expiry','send-files') ?>
+                   <?php _e( ' 4. To set files expiry go to', 'send-files'); ?> <a href="<?php echo esc_url($url).'&tab=general_options' ?>"><?php _e( 'General Options','send-files') ?></a> --> <?php _e( 'Uploaded files expiry','send-files') ?>
                 </p>
             </div>
         <?php endif; ?>

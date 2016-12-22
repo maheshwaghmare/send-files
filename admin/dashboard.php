@@ -15,10 +15,18 @@
             <h2 class="nav-tab-wrapper">
                         <?php $url = admin_url( 'options-general.php?page=wp-sendfiles'); ?>
                         
-                <a href="<?php echo $url.'&tab=welcome' ?>" class="nav-tab <?php echo $active_tab == 'welcome' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'send-files');?></a>
-                <a href="<?php echo $url.'&tab=dropbox_options' ?>" class="nav-tab <?php echo $active_tab == 'dropbox_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Dropbox Options', 'send-files');?></a>
-                <a href="<?php echo $url.'&tab=general_options' ?>" class="nav-tab <?php echo $active_tab == 'general_options' ? 'nav-tab-active' : ''; ?>"><?php _e( 'General Options', 'send-files');?></a>
-                <a href="<?php echo $url.'&tab=how_it_works' ?>" class="nav-tab <?php echo $active_tab == 'how_it_works' ? 'nav-tab-active' : ''; ?>"><?php _e( 'How It Works?', 'send-files');?></a>
+                <a href="<?php echo esc_url($url).'&tab=welcome' ?>" class="nav-tab <?php echo $active_tab == 'welcome' ? 'nav-tab-active' : ''; ?>">
+                    <?php _e( 'Welcome', 'send-files');?>
+                </a>
+                <a href="<?php echo esc_url($url).'&tab=dropbox_options' ?>" class="nav-tab <?php echo $active_tab == 'dropbox_options' ? 'nav-tab-active' : ''; ?>">
+                    <?php _e( 'Dropbox Options', 'send-files');?>
+                </a>
+                <a href="<?php echo esc_url($url).'&tab=general_options' ?>" class="nav-tab <?php echo $active_tab == 'general_options' ? 'nav-tab-active' : ''; ?>">
+                    <?php _e( 'General Options', 'send-files');?>
+                </a>
+                <a href="<?php echo esc_url($url).'&tab=how_it_works' ?>" class="nav-tab <?php echo $active_tab == 'how_it_works' ? 'nav-tab-active' : ''; ?>">
+                    <?php _e( 'How It Works?', 'send-files');?>
+                </a>
             </h2>
          </div>
 
@@ -26,11 +34,21 @@
         <?php if ($active_tab == 'welcome' ):?>
 
             <div class="welcome-panel">
-                <h1><?php _e( 'Welcome to', 'send-files');?> <span class="version"><?php _e( 'Send Files', 'send-files');?></span></h1>
-                <p><?php _e( 'Thank you for choosing sendfiles', 'send-files');?></p>
+                <h1>
+                    <?php _e( 'Welcome to Send Files', 'send-files');?> 
+                </h1>
+                <p>
+                    <?php _e( 'Thank you for choosing sendfiles', 'send-files');?>
+                </p>
                 <p><?php _e( 'The easiest way to share files using Dropbox.', 'send-files');?>
-                   <?php _e( 'It will allow you upload large files on your Dropbox account and will return sharable public URL.', 'send-files');?></p>
-                <h3><?php _e( 'Getting Started -', 'send-files');?> <a href="<?php echo $url.'&tab=dropbox_options' ?>"><?php _e( 'Connect with your Dropbox Account.', 'send-files');?></a></h3>
+                   <?php _e( 'It will allow you upload large files on your Dropbox account and will return sharable public URL.', 'send-files');?>
+               </p>
+                <h3>
+                    <?php _e( 'Getting Started -', 'send-files');?> 
+                    <a href="<?php echo esc_url($url).'&tab=dropbox_options'; ?>">
+                        <?php _e( 'Connect with your Dropbox Account.', 'send-files');?>
+                    </a>
+                </h3>
             </div>
 
         <?php endif;?>
@@ -83,7 +101,7 @@
                             $dropbox = new Dropbox();
                             $dropboxAuthUrl = $dropbox->getAuthUrl();?>
 
-                            <a class="button-primary connect-btn" target="_blank" href="<?php echo $dropboxAuthUrl; ?>" >
+                            <a class="button-primary connect-btn" target="_blank" href="<?php echo esc_url( $dropboxAuthUrl ); ?>" >
                                 <?php _e( 'Reconnect With Dropbox', 'send-files') ?>
                             </a>
                             <a class="button-secondary disconnect-btn" >
@@ -92,6 +110,7 @@
                         <br>
 
                 <?php else : ?>
+                <!-- account information -->
                     <div class='account-info'>
                         <h1>
                             <?php  _e( 'Dropbox Account Details', 'send-files') ?>
@@ -113,7 +132,7 @@
 
                     <?php $dropbox = new Dropbox();
                     $dropboxAuthUrl = $dropbox->getAuthUrl();?>
-                    <a class="button-primary connect-btn" target="_blank" href="<?php echo $dropboxAuthUrl; ?>">
+                    <a class="button-primary connect-btn" target="_blank" href="<?php echo esc_url( $dropboxAuthUrl ); ?>">
                         <?php _e( 'Connect With Dropbox', 'send-files') ?>
                     </a><br>
 
@@ -133,13 +152,13 @@
                                         <label><?php  _e( 'Token', 'send-files' ); ?></label>
                                     </td>
                                     <td>
-                                        <input type="text" id="auth-token" required  placeHolder="<?php _e( 'Please enter the token', 'send-files' ); ?>"/>
+                                        <input type="text" id="auth-token" required  placeHolder="<?php echo esc_attr( 'Please enter the token', 'send-files' ); ?>"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2">
                                         <div class="submit-wrapper">
-                                            <input type="button" id="authorize-btn"   name="wp-sendfiles-button" class="button-primary" value="<?php echo __( 'Save Settings', 'send-files' ); ?>" />
+                                            <input type="button" id="authorize-btn"   name="wp-sendfiles-button" class="button-primary" value="<?php echo esc_attr( 'Save Settings', 'send-files' ); ?>" />
                                             <div id="ajaxloader"></div>
                                         </div>
                                     </td>
@@ -152,7 +171,9 @@
                     <span class="auth-message error"></span>
                     <!-- disconnected modal message -->
                     <div id="dialog-confirm" title="Disconnect with dropbox?">
-                    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span><?php _e( 'Do you really want to disconnect with Dropbox?', 'send-files');?></p>
+                    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+                        <?php _e( 'Do you really want to disconnect with Dropbox?', 'send-files');?><
+                        /p>
                     </div>
                 </div>
             </div>
