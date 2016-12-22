@@ -15,7 +15,7 @@ use Dropbox as dbx;
     
     function sendfiles_add_cron_intervals( $schedules ) {
             if(isset($_POST['wp-sendfiles-basic'])) {
-                $settings = (isset($_POST['sendfiles'])) ? sanitize_text_field($_POST['sendfiles']) : array();
+                $settings = (isset($_POST['sendfiles'])) ? (array_map( 'sanitize_text_field', $_POST['sendfiles'] )) : array();
                  update_option( 'wp-sendfiles-basic', $settings );
             }
             $settings = get_option( 'wp-sendfiles-basic', array());

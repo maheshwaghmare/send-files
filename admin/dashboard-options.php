@@ -5,7 +5,8 @@
 
             if(isset($_POST['wp-sendfiles-basic'])) :
 
-                $settings = (isset($_POST['sendfiles'])) ?  sanitize_text_field($_POST['sendfiles']) : array();
+                $settings = (isset($_POST['sendfiles'])) ?  (array_map( 'sanitize_text_field', $_POST['sendfiles'] )) : array();
+
                 $is_update = update_option( 'wp-sendfiles-basic', $settings );?>
 
                 <div class="updated success notify">
@@ -126,22 +127,24 @@
                                 
                                 <div class="form-field">
                                     <input type="number" value="<?php echo (isset($settings['expiry_number'])) ? sanitize_text_field($settings['expiry_number']) : ''; ?>" name="sendfiles[expiry_number]" class="expiry-number" min=".1" step="any" size="3"/>
+                                     <?php 
+                                        if (!isset($settings['expiry_type'])) {
+                                            $settings['expiry_type'] = 0;
+                                        } ?>
+                                            <select name="sendfiles[expiry_type]">
+                                                <option <?php selected( $settings['expiry_type'], '0'); ?> value="0" selected><?php _e( 'Select your option', 'send-files'); ?></option>
+                                                <option <?php selected( $settings['expiry_type'], 'minutes'); ?> value="minutes"><?php _e( 'Minutes', 'send-files'); ?></option> 
+                                                <option <?php selected( $settings['expiry_type'], 'hours'); ?> value="hours"><?php _e( 'Hours', 'send-files'); ?></option> 
+                                                <option <?php selected( $settings['expiry_type'], 'days'); ?> value="days"><?php _e( 'Days', 'send-files'); ?></option> 
+                                                <option <?php selected( $settings['expiry_type'], 'months'); ?> value="months"><?php _e( 'Months', 'send-files'); ?></option>
+                                            </select>
                                     <?php 
-                                    if (!isset($settings['expiry_type'])) {
-                                        $settings['expiry_type'] = 0;
-                                    } ?>
-                                        <select name="sendfiles[expiry_type]">
-                                        <option <?php selected( $settings['expiry_type'], '0'); ?> value="0" selected><?php _e( 'Select your option', 'send-files'); ?></option>
-                                        <option <?php selected( $settings['expiry_type'], 'minutes'); ?> value="minutes"><?php _e( 'Minutes', 'send-files'); ?></option> 
-                                        <option <?php selected( $settings['expiry_type'], 'hours'); ?> value="hours"><?php _e( 'Hours', 'send-files'); ?></option> 
-                                        <option <?php selected( $settings['expiry_type'], 'days'); ?> value="days"><?php _e( 'Days', 'send-files'); ?></option> 
-                                        <option <?php selected( $settings['expiry_type'], 'months'); ?> value="months"><?php _e( 'Months', 'send-files'); ?></option>
-                                    </select>
+                                    ?>
                                 </div>
                             </div>
                             <div class="clear button-wrapper">
                                  <input type="submit" id="set-color" name="wp-sendfiles-basic" class="button-primary" value="<?php echo __( 'Save Settings', 'send-files' ); ?>" />
-                             </div>
+                             </div> 
                             
                     </form>
             </div>

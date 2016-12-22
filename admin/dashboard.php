@@ -62,7 +62,7 @@
             $is_update = false;
             if(isset($_POST['wp-sendfiles-button'])) {
 
-                $settings = (isset($_POST['sendfiles'])) ? sanitize_text_field( $_POST['sendfiles'] ) : array();
+                $settings = (isset($_POST['sendfiles'])) ? (array_map( 'sanitize_text_field', $_POST['sendfiles'] )) : array();
                 $is_update = update_option( 'wpsendfiles', $settings );
             }
             $settings = get_option( 'wpsendfiles' , array()); 
@@ -171,9 +171,9 @@
                     <span class="auth-message error"></span>
                     <!-- disconnected modal message -->
                     <div id="dialog-confirm" title="Disconnect with dropbox?">
-                    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
-                        <?php _e( 'Do you really want to disconnect with Dropbox?', 'send-files');?><
-                        /p>
+                        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+                            <?php _e( 'Do you really want to disconnect with Dropbox?', 'send-files');?>
+                        </p>
                     </div>
                 </div>
             </div>
