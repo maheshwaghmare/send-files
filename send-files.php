@@ -3,14 +3,15 @@
 Plugin Name: Send Files
 Plugin URI: https://www.brainstormforce.com
 Author: Brainstorm Force
+Contributors: brainstormforce, rushijagani
 Author URI: https://www.brainstormforce.com
 Description: Send Files is a simple plugin that connects with your Dropbox account. Once the plugin is installed and configured, you can create a beautiful page on your website where your users can upload files and share the link with you (or anyone else)
-Version: 0.0.1
+Version: 1.0.0
 Text Domain: send-files
 */
 
 if(!defined('SENDFILES_VERSION')) {
-	define( 'SENDFILES_VERSION', '0.0.1' );
+	define( 'SENDFILES_VERSION', '1.0.0' );
 }
 if(!defined('SENDFILES_PATH')) {
 	define( 'SENDFILES_PATH', plugin_dir_path(__FILE__) );
