@@ -109,28 +109,17 @@ class Dropbox implements iUploadFile{
      * @return $dw_link
      *			sharable url for uploaded file
      *
-     */	
-
-
-	public function uploadFile()
+     */
+    public function uploadFile()
 	{
 		ini_set('max_execution_time', 300);
-		$values = get_option( 'sendfiles-auth' , array() );
+		$values    = get_option( 'sendfiles-auth' , array() );
 		$dbxClient = self::getClient($values['access_token']);
-		$name = $_FILES["sendfiles-files"]["name"];
-		$f = fopen($_FILES["sendfiles-files"]["tmp_name"], "rb");
-		$result = $dbxClient->uploadFile("/".$name, dbx\WriteMode::add(), $f);
+		$name      = $_FILES["sendfiles-files"]["name"];
+		$f         = fopen($_FILES["sendfiles-files"]["tmp_name"], "rb");
+		$result    = $dbxClient->uploadFile("/".$name, dbx\WriteMode::add(), $f);
 		fclose($f);
 		$file = $dbxClient->getMetadata('/'.$name);
-
-		$custom_post_sendfiles = array(
-		    'post_type' => 'sendfiles_list',
-		    'post_title' => $values['user_id'],
-		    'post_content' => $result['path'],
-		    'post_status' => 'publish'
-		);
-		// insert uploaded file to post table
-		wp_insert_post( $custom_post_sendfiles, true );
 
 		$dropboxPath = $result['path'];
 		$pathError = dbx\Path::findError($dropboxPath);
@@ -141,6 +130,22 @@ class Dropbox implements iUploadFile{
 
 		$link = $dbxClient->createTemporaryDirectLink($dropboxPath);
 		$dw_link = $link[0];
+
+		$uploaded_file_details  = '<b>PATH: </b>' . $dw_link . '?dl=1 <br/>';
+		$uploaded_file_details .= '<hr/><br/>';
+		$uploaded_file_details .= '<b>USER ID: </b>' . $values['user_id'] . '<br/>';
+		$uploaded_file_details .= '<b>DATE: </b>' . date('l jS \of F Y h:i:s A') . '<br/>';
+
+		$custom_post_sendfiles = array(
+			'post_type'    => 'sendfiles_list',
+			'post_title'   => $result['path'],
+			'post_content' => $uploaded_file_details,
+			'post_status'  => 'publish'
+		);
+
+		// insert uploaded file to post table
+		wp_insert_post( $custom_post_sendfiles, true );
+
 		echo $dw_link.'?dl=1';//return the uploaded file url
 		die();
 	}

@@ -18,6 +18,7 @@ if(!defined('SENDFILES_PATH')) {
 }
 
 require_once(SENDFILES_PATH.'dropbox/autoload.php');
+require_once(SENDFILES_PATH.'classes/post-type.php');
 require_once(SENDFILES_PATH.'classes/upload.interface.php');
 require_once(SENDFILES_PATH.'classes/dropbox.class.php');
 include_once(SENDFILES_PATH.'admin/sendfiles-cron.php');
